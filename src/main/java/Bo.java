@@ -49,14 +49,40 @@ public class Bo {
                     Task task = tracker.unmarkTask(taskNumber);
                     System.out.println(" OK, I've marked this task as not done yet:");
                     System.out.println("   " + task);
+                } else if (command.startsWith("todo ")) {
+                    addTask(tracker, new Todo(command.substring(5)));
+                } else if (command.startsWith("deadline ")) {
+                    int byIndex = command.indexOf(" /by ");
+                    String description = command.substring(9, byIndex);
+                    String by = command.substring(byIndex + 5);
+                    addTask(tracker, new Deadline(description, by));
+                } else if (command.startsWith("event ")) {
+                    int fromIndex = command.indexOf(" /from ");
+                    int toIndex = command.indexOf(" /to ");
+                    String description = command.substring(6, fromIndex);
+                    String from = command.substring(fromIndex + 7, toIndex);
+                    String to = command.substring(toIndex + 5);
+                    addTask(tracker, new Event(description, from, to));
                 } else {
-                    tracker.addTask(command);
-                    System.out.println(" added: " + command);
+                    System.out.println(" Sorry, I don't understand that command.");
                 }
 
                 printSeparator();
             }
         }
+    }
+
+    /**
+     * Adds a task and displays its confirmation message.
+     *
+     * @param tracker the tracker that stores the task
+     * @param task the task to add
+     */
+    private static void addTask(Tracker tracker, Task task) {
+        tracker.addTask(task);
+        System.out.println(" Got it. I've added this task:");
+        System.out.println("   " + task);
+        System.out.println(" Now you have " + tracker.getTaskCount() + " tasks in the list.");
     }
 
     /**

@@ -18,13 +18,22 @@ public class Tracker {
     /**
      * Adds a task to the tracker.
      *
-     * @param task the task text entered by the user
+     * @param task the task object to store
      */
-    public void addTask(String task) {
+    public void addTask(Task task) {
         if (taskCount < MAX_TASKS) {
-            tasks[taskCount] = new Task(task);
+            tasks[taskCount] = task;
             taskCount++;
         }
+    }
+
+    /**
+     * Returns the number of tasks currently stored.
+     *
+     * @return the number of stored tasks
+     */
+    public int getTaskCount() {
+        return taskCount;
     }
 
     /**
