@@ -72,6 +72,8 @@ public class Bo {
             changeTaskStatus(tracker, command.substring(4).trim(), true);
         } else if (command.equals("unmark") || command.startsWith("unmark ")) {
             changeTaskStatus(tracker, command.substring(6).trim(), false);
+        } else if (command.equals("delete") || command.startsWith("delete ")) {
+            deleteTask(tracker, command.substring(6).trim());
         } else {
             throw new CommandException(getCommandInstructions());
         }
@@ -152,6 +154,25 @@ public class Bo {
     }
 
     /**
+     * Deletes a numbered task after checking that its number is valid.
+     *
+     * @param tracker the tracker used to manage tasks
+     * @param taskNumberText the task number entered by the user
+     * @throws CommandException if the task number is invalid
+     */
+    private static void deleteTask(Tracker tracker, String taskNumberText) throws CommandException {
+        try {
+            int taskNumber = Integer.parseInt(taskNumberText);
+            if (!tracker.isValidTaskNumber(taskNumber)) {
+                throw new CommandException("That task number does not exist. Use list to see your tasks.");
+            }
+            tracker.deleteTask(taskNumber);
+        } catch (NumberFormatException e) {
+            throw new CommandException("Use delete <task number> to remove a task.");
+        }
+    }
+
+    /**
      * Returns the commands that Bo understands.
      *
      * @return a multi-line command guide
@@ -164,6 +185,7 @@ public class Bo {
                 + "list\n"
                 + "mark <task number>\n"
                 + "unmark <task number>\n"
+                + "delete <task number>\n"
                 + "bye";
     }
 
