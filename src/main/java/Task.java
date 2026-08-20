@@ -1,7 +1,7 @@
 /**
- * Represents one task and whether it has been completed.
+ * Represents the shared information for every type of task.
  */
-public class Task {
+public abstract class Task {
     private final String description;
     private boolean isDone;
 
@@ -10,7 +10,7 @@ public class Task {
      *
      * @param description the text that describes the task
      */
-    public Task(String description) {
+    protected Task(String description) {
         this.description = description;
         isDone = false;
     }
@@ -30,9 +30,9 @@ public class Task {
     }
 
     /**
-     * Returns this task in the format used by Bo's task list.
+     * Returns the shared completion-status part of a task display.
      *
-     * @return the task's status and description
+     * @return the task's completion status and description
      */
     @Override
     public String toString() {
