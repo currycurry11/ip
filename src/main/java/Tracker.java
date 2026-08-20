@@ -41,6 +41,16 @@ public class Tracker {
     }
 
     /**
+     * Checks whether a task number refers to a saved task.
+     *
+     * @param taskNumber the task number entered by the user
+     * @return true if the task number is valid
+     */
+    public boolean isValidTaskNumber(int taskNumber) {
+        return taskNumber >= 1 && taskNumber <= taskCount;
+    }
+
+    /**
      * Marks a numbered task as completed.
      *
      * @param taskNumber the task number displayed in the list
