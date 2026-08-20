@@ -39,6 +39,16 @@ public class Bo {
 
                 if (command.equals("list")) {
                     tracker.printTasks();
+                } else if (command.startsWith("mark ")) {
+                    int taskNumber = Integer.parseInt(command.substring(5));
+                    Task task = tracker.markTask(taskNumber);
+                    System.out.println(" Nice! I've marked this task as done:");
+                    System.out.println("   " + task);
+                } else if (command.startsWith("unmark ")) {
+                    int taskNumber = Integer.parseInt(command.substring(7));
+                    Task task = tracker.unmarkTask(taskNumber);
+                    System.out.println(" OK, I've marked this task as not done yet:");
+                    System.out.println("   " + task);
                 } else {
                     tracker.addTask(command);
                     System.out.println(" added: " + command);
