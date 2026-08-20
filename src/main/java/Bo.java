@@ -41,28 +41,24 @@ public class Bo {
                     tracker.printTasks();
                 } else if (command.startsWith("mark ")) {
                     int taskNumber = Integer.parseInt(command.substring(5));
-                    Task task = tracker.markTask(taskNumber);
-                    System.out.println(" Nice! I've marked this task as done:");
-                    System.out.println("   " + task);
+                    tracker.markTask(taskNumber);
                 } else if (command.startsWith("unmark ")) {
                     int taskNumber = Integer.parseInt(command.substring(7));
-                    Task task = tracker.unmarkTask(taskNumber);
-                    System.out.println(" OK, I've marked this task as not done yet:");
-                    System.out.println("   " + task);
+                    tracker.unmarkTask(taskNumber);
                 } else if (command.startsWith("todo ")) {
-                    addTask(tracker, new Todo(command.substring(5)));
+                    tracker.addTask(new Todo(command.substring(5)));
                 } else if (command.startsWith("deadline ")) {
                     int byIndex = command.indexOf(" /by ");
                     String description = command.substring(9, byIndex);
                     String by = command.substring(byIndex + 5);
-                    addTask(tracker, new Deadline(description, by));
+                    tracker.addTask(new Deadline(description, by));
                 } else if (command.startsWith("event ")) {
                     int fromIndex = command.indexOf(" /from ");
                     int toIndex = command.indexOf(" /to ");
                     String description = command.substring(6, fromIndex);
                     String from = command.substring(fromIndex + 7, toIndex);
                     String to = command.substring(toIndex + 5);
-                    addTask(tracker, new Event(description, from, to));
+                    tracker.addTask(new Event(description, from, to));
                 } else {
                     System.out.println(" Sorry, I don't understand that command.");
                 }
@@ -70,19 +66,6 @@ public class Bo {
                 printSeparator();
             }
         }
-    }
-
-    /**
-     * Adds a task and displays its confirmation message.
-     *
-     * @param tracker the tracker that stores the task
-     * @param task the task to add
-     */
-    private static void addTask(Tracker tracker, Task task) {
-        tracker.addTask(task);
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   " + task);
-        System.out.println(" Now you have " + tracker.getTaskCount() + " tasks in the list.");
     }
 
     /**

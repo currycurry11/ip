@@ -24,16 +24,10 @@ public class Tracker {
         if (taskCount < MAX_TASKS) {
             tasks[taskCount] = task;
             taskCount++;
+            System.out.println(" Got it. I've added this task:");
+            System.out.println("   " + task);
+            System.out.println(" Now you have " + taskCount + " tasks in the list.");
         }
-    }
-
-    /**
-     * Returns the number of tasks currently stored.
-     *
-     * @return the number of stored tasks
-     */
-    public int getTaskCount() {
-        return taskCount;
     }
 
     /**
@@ -50,23 +44,23 @@ public class Tracker {
      * Marks a numbered task as completed.
      *
      * @param taskNumber the task number displayed in the list
-     * @return the completed task
      */
-    public Task markTask(int taskNumber) {
+    public void markTask(int taskNumber) {
         Task task = tasks[taskNumber - 1];
         task.markAsDone();
-        return task;
+        System.out.println(" Nice! I've marked this task as done:");
+        System.out.println("   " + task);
     }
 
     /**
      * Marks a numbered task as not completed.
      *
      * @param taskNumber the task number displayed in the list
-     * @return the incomplete task
      */
-    public Task unmarkTask(int taskNumber) {
+    public void unmarkTask(int taskNumber) {
         Task task = tasks[taskNumber - 1];
         task.markAsNotDone();
-        return task;
+        System.out.println(" OK, I've marked this task as not done yet:");
+        System.out.println("   " + task);
     }
 }
