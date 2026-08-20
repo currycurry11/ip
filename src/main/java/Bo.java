@@ -25,6 +25,8 @@ public class Bo {
         printSeparator();
 
         try (Scanner scanner = new Scanner(System.in)) {
+            Tracker tracker = new Tracker();
+
             while (true) {
                 String command = scanner.nextLine();
                 printSeparator();
@@ -35,7 +37,13 @@ public class Bo {
                     break;
                 }
 
-                System.out.println(" " + command);
+                if (command.equals("list")) {
+                    tracker.printTasks();
+                } else {
+                    tracker.addTask(command);
+                    System.out.println(" added: " + command);
+                }
+
                 printSeparator();
             }
         }
