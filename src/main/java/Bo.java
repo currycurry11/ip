@@ -13,5 +13,11 @@ public class Bo {
         System.out.println("What can I do for you?");
         System.out.println();
         System.out.println("Bye. Hope to see you again soon!");
+        printSeparator();
+    }
+
+    // Prints a horizontal line to separate sections of Bo's messages.
+    public static void printSeparator() {
+        System.out.println("----------------------------------------");
     }
 }
