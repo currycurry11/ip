@@ -9,13 +9,17 @@ import java.time.LocalDate;
 public class Tracker {
     private final List<Task> tasks;
     private final Storage storage;
+    private final Ui ui;
 
     /**
      * Creates an empty tracker.
+     *
+     * @param ui the user interface used to display task messages
      */
-    public Tracker() throws CommandException {
+    public Tracker(Ui ui) throws CommandException {
         tasks = new ArrayList<>();
         storage = new Storage();
+        this.ui = ui;
         initializeStorage();
     }
 
@@ -32,19 +36,14 @@ public class Tracker {
             tasks.remove(tasks.size() - 1);
             throw e;
         }
-        System.out.println(" Got it. I've added this task:");
-        System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        ui.showTaskAdded(task, tasks.size());
     }
 
     /**
      * Prints all saved tasks as a numbered list.
      */
     public void printTasks() {
-        System.out.println(" Here are the tasks in your list:");
-        for (int i = 0; i < tasks.size(); i++) {
-            System.out.println(" " + (i + 1) + "." + tasks.get(i));
-        }
+        ui.showTaskList(tasks);
     }
 
     /**
@@ -95,15 +94,7 @@ public class Tracker {
      * @param heading the heading to print before the deadlines
      */
     private void printDeadlineIndexes(List<Integer> taskIndexes, String heading) {
-        System.out.println(heading);
-        if (taskIndexes.isEmpty()) {
-            System.out.println(" No matching deadlines found.");
-            return;
-        }
-
-        for (int taskIndex : taskIndexes) {
-            System.out.println(" " + (taskIndex + 1) + "." + tasks.get(taskIndex));
-        }
+        ui.showDeadlines(taskIndexes, tasks, heading);
     }
 
     /**
@@ -133,8 +124,7 @@ public class Tracker {
             }
             throw e;
         }
-        System.out.println(" Nice! I've marked this task as done:");
-        System.out.println("   " + task);
+        ui.showTaskMarked(task);
     }
 
     /**
@@ -154,8 +144,7 @@ public class Tracker {
             }
             throw e;
         }
-        System.out.println(" OK, I've marked this task as not done yet:");
-        System.out.println("   " + task);
+        ui.showTaskUnmarked(task);
     }
 
     /**
@@ -172,9 +161,7 @@ public class Tracker {
             tasks.add(taskIndex, task);
             throw e;
         }
-        System.out.println(" Noted. I've removed this task:");
-        System.out.println("   " + task);
-        System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+        ui.showTaskDeleted(task, tasks.size());
     }
 
     /**

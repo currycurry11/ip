@@ -1,4 +1,3 @@
-import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -20,41 +19,36 @@ public class Bo {
                 |____/ \\___/
                 """;
 
-        printSeparator();
-        System.out.println(banner);
-        System.out.println("Hello! I'm Bo.");
-        System.out.println("What can I do for you?");
-        printSeparator();
+        Ui ui = new Ui();
+        ui.showWelcome(banner);
 
         Tracker tracker;
         try {
-            tracker = new Tracker();
+            tracker = new Tracker(ui);
         } catch (CommandException e) {
-            System.out.println(" " + e.getMessage());
+            ui.showError(e.getMessage());
             return;
         }
 
         boolean shouldContinue = true;
-        try (Scanner scanner = new Scanner(System.in)) {
-            while (shouldContinue && scanner.hasNextLine()) {
-                String command = scanner.nextLine().trim();
-                printSeparator();
+        while (shouldContinue && ui.hasNextCommand()) {
+            String command = ui.readCommand();
+            ui.showSeparator();
 
-                if (command.equals("bye")) {
-                    System.out.println("Bye. Hope to see you again soon!");
-                    printSeparator();
-                    shouldContinue = false;
-                    continue;
-                }
-
-                try {
-                    executeCommand(tracker, command);
-                } catch (CommandException e) {
-                    System.out.println(" " + e.getMessage());
-                }
-
-                printSeparator();
+            if (command.equals("bye")) {
+                ui.showGoodbye();
+                ui.showSeparator();
+                shouldContinue = false;
+                continue;
             }
+
+            try {
+                executeCommand(tracker, command);
+            } catch (CommandException e) {
+                ui.showError(e.getMessage());
+            }
+
+            ui.showSeparator();
         }
     }
 
@@ -268,10 +262,4 @@ public class Bo {
                 + "bye";
     }
 
-    /**
-     * Prints a horizontal line to separate sections of Bo's messages.
-     */
-    public static void printSeparator() {
-        System.out.println("----------------------------------------");
-    }
 }
