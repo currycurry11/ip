@@ -15,6 +15,15 @@ public class TaskList {
     }
 
     /**
+     * Creates a task list containing saved tasks.
+     *
+     * @param tasks the tasks to place in this list
+     */
+    public TaskList(List<Task> tasks) {
+        this.tasks = new ArrayList<>(tasks);
+    }
+
+    /**
      * Adds a task to the end of the list.
      *
      * @param task the task to add

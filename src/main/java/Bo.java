@@ -19,13 +19,7 @@ public class Bo {
         Ui ui = new Ui();
         ui.showWelcome(banner);
 
-        Tracker tracker;
-        try {
-            tracker = new Tracker(ui);
-        } catch (CommandException e) {
-            ui.showError(e.getMessage());
-            return;
-        }
+        Tracker tracker = new Tracker(ui);
 
         Parser parser = new Parser();
         while (ui.hasNextCommand()) {

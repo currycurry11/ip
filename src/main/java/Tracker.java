@@ -16,11 +16,10 @@ public class Tracker {
      *
      * @param ui the user interface used to display task messages
      */
-    public Tracker(Ui ui) throws CommandException {
-        taskList = new TaskList();
+    public Tracker(Ui ui) {
         storage = new Storage();
         this.ui = ui;
-        initializeStorage();
+        taskList = loadTaskList();
     }
 
     /**
@@ -178,15 +177,16 @@ public class Tracker {
     }
 
     /**
-     * Ensures that the save file exists before commands begin changing tasks.
+     * Loads saved tasks, or returns an empty list if loading fails.
      *
-     * @throws CommandException if the save file cannot be created
+     * @return the loaded task list, or an empty list after a loading error
      */
-    private void initializeStorage() throws CommandException {
+    private TaskList loadTaskList() {
         try {
-            storage.initialize();
-        } catch (java.io.IOException e) {
-            throw new CommandException("I could not prepare the task save file.");
+            return new TaskList(storage.load());
+        } catch (java.io.IOException | CommandException e) {
+            ui.showLoadingError();
+            return new TaskList();
         }
     }
 }

@@ -55,6 +55,13 @@ public class Ui {
     }
 
     /**
+     * Explains that saved tasks could not be loaded and Bo will start empty.
+     */
+    public void showLoadingError() {
+        System.out.println(" I could not load your saved tasks, so Bo is starting with an empty list.");
+    }
+
+    /**
      * Displays Bo's farewell message.
      */
     public void showGoodbye() {
