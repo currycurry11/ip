@@ -1,4 +1,6 @@
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 /**
  * Starts Bo, a simple personal assistant.
@@ -125,16 +127,23 @@ public class Bo {
         String details = getArguments(command, "deadline");
         int byIndex = details.indexOf("/by");
         if (byIndex < 0) {
-            throw new CommandException("A deadline needs /by information. Use: deadline <description> /by <time>");
+            throw new CommandException("A deadline needs /by information. "
+                    + "Use: deadline <description> /by <yyyy-MM-dd>");
         }
 
         String description = details.substring(0, byIndex).trim();
         String by = details.substring(byIndex + 3).trim();
         if (description.isEmpty() || by.isEmpty()) {
             throw new CommandException("A deadline needs both a description and a time. "
-                    + "Use: deadline <description> /by <time>");
+                    + "Use: deadline <description> /by <yyyy-MM-dd>");
         }
-        tracker.addTask(new Deadline(description, by));
+        try {
+            LocalDate dueDate = LocalDate.parse(by);
+            tracker.addTask(new Deadline(description, dueDate));
+        } catch (DateTimeParseException e) {
+            throw new CommandException("The deadline date must use yyyy-MM-dd, for example: "
+                    + "deadline submit report /by 2019-10-15");
+        }
     }
 
     /**
@@ -215,7 +224,7 @@ public class Bo {
     private static String getCommandInstructions() {
         return "I don't recognize that command. Try one of these:\n"
                 + "todo <description>\n"
-                + "deadline <description> /by <time>\n"
+                + "deadline <description> /by <yyyy-MM-dd>\n"
                 + "event <description> /from <start> /to <end>\n"
                 + "list\n"
                 + "mark <task number>\n"
