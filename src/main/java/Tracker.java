@@ -7,7 +7,7 @@ import java.time.LocalDate;
  * Stores and displays the tasks entered during one run of Bo.
  */
 public class Tracker {
-    private final List<Task> tasks;
+    private final TaskList taskList;
     private final Storage storage;
     private final Ui ui;
 
@@ -17,7 +17,7 @@ public class Tracker {
      * @param ui the user interface used to display task messages
      */
     public Tracker(Ui ui) throws CommandException {
-        tasks = new ArrayList<>();
+        taskList = new TaskList();
         storage = new Storage();
         this.ui = ui;
         initializeStorage();
@@ -29,21 +29,21 @@ public class Tracker {
      * @param task the task object to store
      */
     public void addTask(Task task) throws CommandException {
-        tasks.add(task);
+        taskList.add(task);
         try {
             saveTasks();
         } catch (CommandException e) {
-            tasks.remove(tasks.size() - 1);
+            taskList.remove(taskList.size() - 1);
             throw e;
         }
-        ui.showTaskAdded(task, tasks.size());
+        ui.showTaskAdded(task, taskList.size());
     }
 
     /**
      * Prints all saved tasks as a numbered list.
      */
     public void printTasks() {
-        ui.showTaskList(tasks);
+        ui.showTaskList(taskList.asList());
     }
 
     /**
@@ -54,7 +54,7 @@ public class Tracker {
     public void printUpcomingDeadlines(LocalDate currentDate) {
         List<Integer> taskIndexes = getDeadlineIndexes();
         taskIndexes.removeIf(index -> {
-            Deadline deadline = (Deadline) tasks.get(index);
+            Deadline deadline = (Deadline) taskList.get(index);
             return deadline.isDone() || deadline.getDueDate().isBefore(currentDate);
         });
         printDeadlineIndexes(taskIndexes, " Upcoming deadlines:");
@@ -67,7 +67,7 @@ public class Tracker {
      */
     public void printDeadlinesDueOn(LocalDate dueDate) {
         List<Integer> taskIndexes = getDeadlineIndexes();
-        taskIndexes.removeIf(index -> !((Deadline) tasks.get(index)).getDueDate().equals(dueDate));
+        taskIndexes.removeIf(index -> !((Deadline) taskList.get(index)).getDueDate().equals(dueDate));
         printDeadlineIndexes(taskIndexes, " Deadlines due on " + Deadline.formatDate(dueDate) + ":");
     }
 
@@ -78,12 +78,12 @@ public class Tracker {
      */
     private List<Integer> getDeadlineIndexes() {
         List<Integer> taskIndexes = new ArrayList<>();
-        for (int i = 0; i < tasks.size(); i++) {
-            if (tasks.get(i) instanceof Deadline) {
+        for (int i = 0; i < taskList.size(); i++) {
+            if (taskList.get(i) instanceof Deadline) {
                 taskIndexes.add(i);
             }
         }
-        taskIndexes.sort(Comparator.comparing(index -> ((Deadline) tasks.get(index)).getDueDate()));
+        taskIndexes.sort(Comparator.comparing(index -> ((Deadline) taskList.get(index)).getDueDate()));
         return taskIndexes;
     }
 
@@ -94,7 +94,7 @@ public class Tracker {
      * @param heading the heading to print before the deadlines
      */
     private void printDeadlineIndexes(List<Integer> taskIndexes, String heading) {
-        ui.showDeadlines(taskIndexes, tasks, heading);
+        ui.showDeadlines(taskIndexes, taskList.asList(), heading);
     }
 
     /**
@@ -104,7 +104,7 @@ public class Tracker {
      * @return true if the task number is valid
      */
     public boolean isValidTaskNumber(int taskNumber) {
-        return taskNumber >= 1 && taskNumber <= tasks.size();
+        return taskList.isValidTaskNumber(taskNumber);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Tracker {
      * @param taskNumber the task number displayed in the list
      */
     public void markTask(int taskNumber) throws CommandException {
-        Task task = tasks.get(taskNumber - 1);
+        Task task = taskList.get(taskNumber - 1);
         boolean wasDone = task.isDone();
         task.markAsDone();
         try {
@@ -133,7 +133,7 @@ public class Tracker {
      * @param taskNumber the task number displayed in the list
      */
     public void unmarkTask(int taskNumber) throws CommandException {
-        Task task = tasks.get(taskNumber - 1);
+        Task task = taskList.get(taskNumber - 1);
         boolean wasDone = task.isDone();
         task.markAsNotDone();
         try {
@@ -154,14 +154,14 @@ public class Tracker {
      */
     public void deleteTask(int taskNumber) throws CommandException {
         int taskIndex = taskNumber - 1;
-        Task task = tasks.remove(taskIndex);
+        Task task = taskList.remove(taskIndex);
         try {
             saveTasks();
         } catch (CommandException e) {
-            tasks.add(taskIndex, task);
+            taskList.add(taskIndex, task);
             throw e;
         }
-        ui.showTaskDeleted(task, tasks.size());
+        ui.showTaskDeleted(task, taskList.size());
     }
 
     /**
@@ -171,7 +171,7 @@ public class Tracker {
      */
     private void saveTasks() throws CommandException {
         try {
-            storage.save(tasks);
+            storage.save(taskList.asList());
         } catch (java.io.IOException e) {
             throw new CommandException("I could not save your tasks. Please try again.");
         }
