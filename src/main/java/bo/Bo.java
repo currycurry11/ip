@@ -1,3 +1,9 @@
+package bo;
+
+import bo.parser.Parser;
+import bo.ui.Ui;
+import bo.command.CommandException;
+
 /**
  * Starts Bo, a simple personal assistant.
  */
