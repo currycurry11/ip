@@ -30,6 +30,40 @@ public abstract class Task {
     }
 
     /**
+     * Reports whether this task is completed.
+     *
+     * @return true if this task is marked as done
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
+     * Returns the task status in the format used by the save file.
+     *
+     * @return {@code 1} if completed, otherwise {@code 0}
+     */
+    protected String getSaveStatus() {
+        return isDone ? "1" : "0";
+    }
+
+    /**
+     * Returns the task description for subclasses that save task data.
+     *
+     * @return the task description
+     */
+    protected String getDescription() {
+        return description;
+    }
+
+    /**
+     * Returns this task in a form that can be stored in the save file.
+     *
+     * @return the file representation of this task
+     */
+    public abstract String toFileString();
+
+    /**
      * Returns the shared completion-status part of a task display.
      *
      * @return the task's completion status and description

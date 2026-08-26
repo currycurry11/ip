@@ -24,17 +24,25 @@ public class Bo {
         System.out.println("What can I do for you?");
         printSeparator();
 
-        try (Scanner scanner = new Scanner(System.in)) {
-            Tracker tracker = new Tracker();
+        Tracker tracker;
+        try {
+            tracker = new Tracker();
+        } catch (CommandException e) {
+            System.out.println(" " + e.getMessage());
+            return;
+        }
 
-            while (true) {
-                String command = scanner.nextLine();
+        boolean shouldContinue = true;
+        try (Scanner scanner = new Scanner(System.in)) {
+            while (shouldContinue && scanner.hasNextLine()) {
+                String command = scanner.nextLine().trim();
                 printSeparator();
 
                 if (command.equals("bye")) {
                     System.out.println("Bye. Hope to see you again soon!");
                     printSeparator();
-                    break;
+                    shouldContinue = false;
+                    continue;
                 }
 
                 try {
@@ -56,27 +64,54 @@ public class Bo {
      * @throws CommandException if the command is incomplete or unknown
      */
     private static void executeCommand(Tracker tracker, String command) throws CommandException {
-        if (command.equals("list")) {
+        if (command.isEmpty()) {
+            throw new CommandException("Please enter a command. Type an action such as todo or list.");
+        } else if (command.equals("list")) {
             tracker.printTasks();
-        } else if (command.equals("todo") || command.startsWith("todo ")) {
-            String description = command.substring(4).trim();
+        } else if (isCommand(command, "todo")) {
+            String description = getArguments(command, "todo");
             if (description.isEmpty()) {
                 throw new CommandException("A todo needs a description. Use: todo <description>");
             }
             tracker.addTask(new Todo(description));
-        } else if (command.equals("deadline") || command.startsWith("deadline ")) {
+        } else if (isCommand(command, "deadline")) {
             addDeadline(tracker, command);
-        } else if (command.equals("event") || command.startsWith("event ")) {
+        } else if (isCommand(command, "event")) {
             addEvent(tracker, command);
-        } else if (command.equals("mark") || command.startsWith("mark ")) {
-            changeTaskStatus(tracker, command.substring(4).trim(), true);
-        } else if (command.equals("unmark") || command.startsWith("unmark ")) {
-            changeTaskStatus(tracker, command.substring(6).trim(), false);
-        } else if (command.equals("delete") || command.startsWith("delete ")) {
-            deleteTask(tracker, command.substring(6).trim());
+        } else if (isCommand(command, "mark")) {
+            changeTaskStatus(tracker, getArguments(command, "mark"), true);
+        } else if (isCommand(command, "unmark")) {
+            changeTaskStatus(tracker, getArguments(command, "unmark"), false);
+        } else if (isCommand(command, "delete")) {
+            deleteTask(tracker, getArguments(command, "delete"));
         } else {
             throw new CommandException(getCommandInstructions());
         }
+    }
+
+    /**
+     * Checks whether an input starts with a complete command word.
+     *
+     * @param input the trimmed user input
+     * @param commandName the command word to check
+     * @return true if the input is the command or has arguments after it
+     */
+    private static boolean isCommand(String input, String commandName) {
+        return input.equals(commandName)
+                || (input.startsWith(commandName)
+                && input.length() > commandName.length()
+                && Character.isWhitespace(input.charAt(commandName.length())));
+    }
+
+    /**
+     * Gets the trimmed text following a command word.
+     *
+     * @param input the complete user input
+     * @param commandName the command word at the start of the input
+     * @return the command arguments, or an empty string when none were supplied
+     */
+    private static String getArguments(String input, String commandName) {
+        return input.substring(commandName.length()).trim();
     }
 
     /**
@@ -87,14 +122,14 @@ public class Bo {
      * @throws CommandException if the command is incomplete
      */
     private static void addDeadline(Tracker tracker, String command) throws CommandException {
-        String details = command.substring(8).trim();
-        int byIndex = details.indexOf(" /by ");
+        String details = getArguments(command, "deadline");
+        int byIndex = details.indexOf("/by");
         if (byIndex < 0) {
             throw new CommandException("A deadline needs /by information. Use: deadline <description> /by <time>");
         }
 
         String description = details.substring(0, byIndex).trim();
-        String by = details.substring(byIndex + 5).trim();
+        String by = details.substring(byIndex + 3).trim();
         if (description.isEmpty() || by.isEmpty()) {
             throw new CommandException("A deadline needs both a description and a time. "
                     + "Use: deadline <description> /by <time>");
@@ -110,17 +145,17 @@ public class Bo {
      * @throws CommandException if the command is incomplete
      */
     private static void addEvent(Tracker tracker, String command) throws CommandException {
-        String details = command.substring(5).trim();
-        int fromIndex = details.indexOf(" /from ");
-        int toIndex = details.indexOf(" /to ");
+        String details = getArguments(command, "event");
+        int fromIndex = details.indexOf("/from");
+        int toIndex = details.indexOf("/to");
         if (fromIndex < 0 || toIndex < 0 || fromIndex >= toIndex) {
             throw new CommandException("An event needs /from and /to information. "
                     + "Use: event <description> /from <start> /to <end>");
         }
 
         String description = details.substring(0, fromIndex).trim();
-        String from = details.substring(fromIndex + 7, toIndex).trim();
-        String to = details.substring(toIndex + 5).trim();
+        String from = details.substring(fromIndex + 5, toIndex).trim();
+        String to = details.substring(toIndex + 3).trim();
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
             throw new CommandException("An event needs a description, start, and end time. "
                     + "Use: event <description> /from <start> /to <end>");
