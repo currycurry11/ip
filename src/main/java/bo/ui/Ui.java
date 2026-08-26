@@ -1,5 +1,9 @@
+package bo.ui;
+
 import java.util.List;
 import java.util.Scanner;
+
+import bo.task.*;
 
 /**
  * Handles console input and output for Bo.

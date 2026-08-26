@@ -1,3 +1,5 @@
+package bo.task;
+
 /**
  * Represents the shared information for every type of task.
  */

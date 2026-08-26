@@ -1,3 +1,5 @@
+package bo.command;
+
 /**
  * Represents an error caused by an incomplete or unsupported user command.
  */

@@ -1,3 +1,5 @@
+package bo.task;
+
 /**
  * Represents a task with a start and end time.
  */
