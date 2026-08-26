@@ -24,7 +24,12 @@ public class Tracker {
      */
     public void addTask(Task task) throws CommandException {
         tasks.add(task);
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (CommandException e) {
+            tasks.remove(tasks.size() - 1);
+            throw e;
+        }
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
@@ -57,8 +62,16 @@ public class Tracker {
      */
     public void markTask(int taskNumber) throws CommandException {
         Task task = tasks.get(taskNumber - 1);
+        boolean wasDone = task.isDone();
         task.markAsDone();
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (CommandException e) {
+            if (!wasDone) {
+                task.markAsNotDone();
+            }
+            throw e;
+        }
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
     }
@@ -70,8 +83,16 @@ public class Tracker {
      */
     public void unmarkTask(int taskNumber) throws CommandException {
         Task task = tasks.get(taskNumber - 1);
+        boolean wasDone = task.isDone();
         task.markAsNotDone();
-        saveTasks();
+        try {
+            saveTasks();
+        } catch (CommandException e) {
+            if (wasDone) {
+                task.markAsDone();
+            }
+            throw e;
+        }
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
     }
@@ -82,8 +103,14 @@ public class Tracker {
      * @param taskNumber the task number displayed in the list
      */
     public void deleteTask(int taskNumber) throws CommandException {
-        Task task = tasks.remove(taskNumber - 1);
-        saveTasks();
+        int taskIndex = taskNumber - 1;
+        Task task = tasks.remove(taskIndex);
+        try {
+            saveTasks();
+        } catch (CommandException e) {
+            tasks.add(taskIndex, task);
+            throw e;
+        }
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");

@@ -30,6 +30,15 @@ public abstract class Task {
     }
 
     /**
+     * Reports whether this task is completed.
+     *
+     * @return true if this task is marked as done
+     */
+    public boolean isDone() {
+        return isDone;
+    }
+
+    /**
      * Returns the task status in the format used by the save file.
      *
      * @return {@code 1} if completed, otherwise {@code 0}

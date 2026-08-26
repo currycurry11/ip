@@ -1,7 +1,10 @@
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.util.List;
 
 /**
@@ -18,8 +21,10 @@ public class Storage {
      */
     public void initialize() throws IOException {
         Files.createDirectories(FILE_PATH.getParent());
-        if (Files.notExists(FILE_PATH)) {
+        try {
             Files.createFile(FILE_PATH);
+        } catch (FileAlreadyExistsException e) {
+            // The existing save file must be preserved.
         }
     }
 
@@ -34,6 +39,17 @@ public class Storage {
         List<String> taskLines = tasks.stream()
                 .map(Task::toFileString)
                 .toList();
-        Files.write(FILE_PATH, taskLines, StandardCharsets.UTF_8);
+        Path temporaryFile = Files.createTempFile(FILE_PATH.getParent(), "bo-", ".tmp");
+        try {
+            Files.write(temporaryFile, taskLines, StandardCharsets.UTF_8);
+            try {
+                Files.move(temporaryFile, FILE_PATH, StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } catch (AtomicMoveNotSupportedException e) {
+                Files.move(temporaryFile, FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            Files.deleteIfExists(temporaryFile);
+        }
     }
 }
