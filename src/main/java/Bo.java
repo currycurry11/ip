@@ -24,8 +24,15 @@ public class Bo {
         System.out.println("What can I do for you?");
         printSeparator();
 
+        Tracker tracker;
+        try {
+            tracker = new Tracker();
+        } catch (CommandException e) {
+            System.out.println(" " + e.getMessage());
+            return;
+        }
+
         try (Scanner scanner = new Scanner(System.in)) {
-            Tracker tracker = new Tracker();
 
             while (true) {
                 String command = scanner.nextLine();

@@ -11,9 +11,10 @@ public class Tracker {
     /**
      * Creates an empty tracker.
      */
-    public Tracker() {
+    public Tracker() throws CommandException {
         tasks = new ArrayList<>();
         storage = new Storage();
+        initializeStorage();
     }
 
     /**
@@ -98,6 +99,19 @@ public class Tracker {
             storage.save(tasks);
         } catch (java.io.IOException e) {
             throw new CommandException("I could not save your tasks. Please try again.");
+        }
+    }
+
+    /**
+     * Ensures that the save file exists before commands begin changing tasks.
+     *
+     * @throws CommandException if the save file cannot be created
+     */
+    private void initializeStorage() throws CommandException {
+        try {
+            storage.initialize();
+        } catch (java.io.IOException e) {
+            throw new CommandException("I could not prepare the task save file.");
         }
     }
 }
