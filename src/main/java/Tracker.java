@@ -6,12 +6,14 @@ import java.util.List;
  */
 public class Tracker {
     private final List<Task> tasks;
+    private final Storage storage;
 
     /**
      * Creates an empty tracker.
      */
     public Tracker() {
         tasks = new ArrayList<>();
+        storage = new Storage();
     }
 
     /**
@@ -19,8 +21,9 @@ public class Tracker {
      *
      * @param task the task object to store
      */
-    public void addTask(Task task) {
+    public void addTask(Task task) throws CommandException {
         tasks.add(task);
+        saveTasks();
         System.out.println(" Got it. I've added this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
@@ -51,9 +54,10 @@ public class Tracker {
      *
      * @param taskNumber the task number displayed in the list
      */
-    public void markTask(int taskNumber) {
+    public void markTask(int taskNumber) throws CommandException {
         Task task = tasks.get(taskNumber - 1);
         task.markAsDone();
+        saveTasks();
         System.out.println(" Nice! I've marked this task as done:");
         System.out.println("   " + task);
     }
@@ -63,9 +67,10 @@ public class Tracker {
      *
      * @param taskNumber the task number displayed in the list
      */
-    public void unmarkTask(int taskNumber) {
+    public void unmarkTask(int taskNumber) throws CommandException {
         Task task = tasks.get(taskNumber - 1);
         task.markAsNotDone();
+        saveTasks();
         System.out.println(" OK, I've marked this task as not done yet:");
         System.out.println("   " + task);
     }
@@ -75,10 +80,24 @@ public class Tracker {
      *
      * @param taskNumber the task number displayed in the list
      */
-    public void deleteTask(int taskNumber) {
+    public void deleteTask(int taskNumber) throws CommandException {
         Task task = tasks.remove(taskNumber - 1);
+        saveTasks();
         System.out.println(" Noted. I've removed this task:");
         System.out.println("   " + task);
         System.out.println(" Now you have " + tasks.size() + " tasks in the list.");
+    }
+
+    /**
+     * Saves the current task list and reports a file error as a command error.
+     *
+     * @throws CommandException if the task list cannot be saved
+     */
+    private void saveTasks() throws CommandException {
+        try {
+            storage.save(tasks);
+        } catch (java.io.IOException e) {
+            throw new CommandException("I could not save your tasks. Please try again.");
+        }
     }
 }

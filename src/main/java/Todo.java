@@ -20,4 +20,14 @@ public class Todo extends Task {
     public String toString() {
         return "[T]" + super.toString();
     }
+
+    /**
+     * Returns this to-do in the save-file format.
+     *
+     * @return the saved to-do text
+     */
+    @Override
+    public String toFileString() {
+        return "T | " + getSaveStatus() + " | " + getDescription();
+    }
 }
