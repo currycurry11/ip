@@ -23,13 +23,32 @@ public class Deadline extends Task {
     }
 
     /**
+     * Returns the date by which this task is due.
+     *
+     * @return this deadline's due date
+     */
+    public LocalDate getDueDate() {
+        return by;
+    }
+
+    /**
+     * Formats a date in the style displayed by Bo.
+     *
+     * @param date the date to format
+     * @return the formatted date
+     */
+    public static String formatDate(LocalDate date) {
+        return date.format(DISPLAY_DATE_FORMAT);
+    }
+
+    /**
      * Returns this deadline in the task-list format.
      *
      * @return the formatted deadline
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by.format(DISPLAY_DATE_FORMAT) + ")";
+        return "[D]" + super.toString() + " (by: " + formatDate(by) + ")";
     }
 
     /**

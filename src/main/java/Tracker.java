@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.time.LocalDate;
 
 /**
  * Stores and displays the tasks entered during one run of Bo.
@@ -42,6 +44,65 @@ public class Tracker {
         System.out.println(" Here are the tasks in your list:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println(" " + (i + 1) + "." + tasks.get(i));
+        }
+    }
+
+    /**
+     * Displays incomplete deadlines that are due today or later, ordered by date.
+     *
+     * @param currentDate the date used to decide which deadlines are upcoming
+     */
+    public void printUpcomingDeadlines(LocalDate currentDate) {
+        List<Integer> taskIndexes = getDeadlineIndexes();
+        taskIndexes.removeIf(index -> {
+            Deadline deadline = (Deadline) tasks.get(index);
+            return deadline.isDone() || deadline.getDueDate().isBefore(currentDate);
+        });
+        printDeadlineIndexes(taskIndexes, " Upcoming deadlines:");
+    }
+
+    /**
+     * Displays all deadlines due on one specified date.
+     *
+     * @param dueDate the date to match
+     */
+    public void printDeadlinesDueOn(LocalDate dueDate) {
+        List<Integer> taskIndexes = getDeadlineIndexes();
+        taskIndexes.removeIf(index -> !((Deadline) tasks.get(index)).getDueDate().equals(dueDate));
+        printDeadlineIndexes(taskIndexes, " Deadlines due on " + Deadline.formatDate(dueDate) + ":");
+    }
+
+    /**
+     * Gets the indexes of all deadline tasks, ordered by their due dates.
+     *
+     * @return the ordered indexes of deadline tasks
+     */
+    private List<Integer> getDeadlineIndexes() {
+        List<Integer> taskIndexes = new ArrayList<>();
+        for (int i = 0; i < tasks.size(); i++) {
+            if (tasks.get(i) instanceof Deadline) {
+                taskIndexes.add(i);
+            }
+        }
+        taskIndexes.sort(Comparator.comparing(index -> ((Deadline) tasks.get(index)).getDueDate()));
+        return taskIndexes;
+    }
+
+    /**
+     * Prints deadline tasks using their original task numbers.
+     *
+     * @param taskIndexes indexes of deadlines to display
+     * @param heading the heading to print before the deadlines
+     */
+    private void printDeadlineIndexes(List<Integer> taskIndexes, String heading) {
+        System.out.println(heading);
+        if (taskIndexes.isEmpty()) {
+            System.out.println(" No matching deadlines found.");
+            return;
+        }
+
+        for (int taskIndex : taskIndexes) {
+            System.out.println(" " + (taskIndex + 1) + "." + tasks.get(taskIndex));
         }
     }
 

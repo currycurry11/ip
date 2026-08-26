@@ -70,6 +70,12 @@ public class Bo {
             throw new CommandException("Please enter a command. Type an action such as todo or list.");
         } else if (command.equals("list")) {
             tracker.printTasks();
+        } else if (command.equals("upcoming")) {
+            tracker.printUpcomingDeadlines(LocalDate.now());
+        } else if (isCommand(command, "upcoming")) {
+            throw new CommandException("Use upcoming without extra text to see future deadlines.");
+        } else if (isCommand(command, "due")) {
+            showDeadlinesDueOn(tracker, getArguments(command, "due"));
         } else if (isCommand(command, "todo")) {
             String description = getArguments(command, "todo");
             if (description.isEmpty()) {
@@ -137,12 +143,39 @@ public class Bo {
             throw new CommandException("A deadline needs both a description and a time. "
                     + "Use: deadline <description> /by <yyyy-MM-dd>");
         }
+        LocalDate dueDate = parseDate(by, "deadline <description> /by <yyyy-MM-dd>");
+        tracker.addTask(new Deadline(description, dueDate));
+    }
+
+    /**
+     * Displays deadlines that fall on a date supplied by the user.
+     *
+     * @param tracker the tracker used to manage tasks
+     * @param dateText the date entered after the due command
+     * @throws CommandException if no valid date is supplied
+     */
+    private static void showDeadlinesDueOn(Tracker tracker, String dateText) throws CommandException {
+        LocalDate date = parseDate(dateText, "due <yyyy-MM-dd>");
+        tracker.printDeadlinesDueOn(date);
+    }
+
+    /**
+     * Parses a date entered in ISO date format.
+     *
+     * @param dateText the date text to parse
+     * @param usage the correct command usage to show if parsing fails
+     * @return the parsed date
+     * @throws CommandException if the date is blank or invalid
+     */
+    private static LocalDate parseDate(String dateText, String usage) throws CommandException {
+        if (dateText.isEmpty()) {
+            throw new CommandException("A date is required. Use: " + usage);
+        }
+
         try {
-            LocalDate dueDate = LocalDate.parse(by);
-            tracker.addTask(new Deadline(description, dueDate));
+            return LocalDate.parse(dateText);
         } catch (DateTimeParseException e) {
-            throw new CommandException("The deadline date must use yyyy-MM-dd, for example: "
-                    + "deadline submit report /by 2019-10-15");
+            throw new CommandException("Dates must use yyyy-MM-dd. Use: " + usage);
         }
     }
 
@@ -227,6 +260,8 @@ public class Bo {
                 + "deadline <description> /by <yyyy-MM-dd>\n"
                 + "event <description> /from <start> /to <end>\n"
                 + "list\n"
+                + "upcoming\n"
+                + "due <yyyy-MM-dd>\n"
                 + "mark <task number>\n"
                 + "unmark <task number>\n"
                 + "delete <task number>\n"
