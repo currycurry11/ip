@@ -10,7 +10,7 @@ public abstract class Task {
     /**
      * Creates an incomplete task with the given description.
      *
-     * @param description the text that describes the task
+     * @param description The text that describes the task.
      */
     protected Task(String description) {
         this.description = description;
@@ -34,7 +34,7 @@ public abstract class Task {
     /**
      * Reports whether this task is completed.
      *
-     * @return true if this task is marked as done
+     * @return True if this task is marked as done.
      */
     public boolean isDone() {
         return isDone;
@@ -43,7 +43,7 @@ public abstract class Task {
     /**
      * Returns the task status in the format used by the save file.
      *
-     * @return {@code 1} if completed, otherwise {@code 0}
+     * @return {@code 1} if completed, otherwise {@code 0}.
      */
     protected String getSaveStatus() {
         return isDone ? "1" : "0";
@@ -52,7 +52,7 @@ public abstract class Task {
     /**
      * Returns the task description for subclasses that save task data.
      *
-     * @return the task description
+     * @return The task description.
      */
     protected String getDescription() {
         return description;
@@ -61,14 +61,14 @@ public abstract class Task {
     /**
      * Returns this task in a form that can be stored in the save file.
      *
-     * @return the file representation of this task
+     * @return The file representation of this task.
      */
     public abstract String toFileString();
 
     /**
      * Returns the shared completion-status part of a task display.
      *
-     * @return the task's completion status and description
+     * @return The task's completion status and description.
      */
     @Override
     public String toString() {

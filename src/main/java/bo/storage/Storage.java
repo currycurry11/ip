@@ -2,20 +2,21 @@ package bo.storage;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.file.AtomicMoveNotSupportedException;
 import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.nio.file.AtomicMoveNotSupportedException;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import bo.task.*;
 import bo.command.CommandException;
+import bo.task.Deadline;
+import bo.task.Event;
+import bo.task.Task;
+import bo.task.Todo;
 
 /**
  * Saves Bo's tasks to a text file.
@@ -38,7 +39,7 @@ public class Storage {
      * tests, where a temporary file should be used instead of Bo's real
      * save file.
      *
-     * @param filePath the file to read from and write to
+     * @param filePath The file to read from and write to.
      */
     public Storage(Path filePath) {
         this.filePath = filePath;
@@ -48,7 +49,7 @@ public class Storage {
      * Creates the data directory and an empty save file if they do not exist.
      * Existing save data is not changed.
      *
-     * @throws IOException if the directory or save file cannot be created
+     * @throws IOException If the directory or save file cannot be created.
      */
     public void initialize() throws IOException {
         if (filePath.getParent() != null) {
@@ -56,7 +57,7 @@ public class Storage {
         }
         try {
             Files.createFile(filePath);
-        } catch (FileAlreadyExistsException e) {
+        } catch (FileAlreadyExistsException exception) {
             // The existing save file must be preserved.
         }
     }
@@ -64,8 +65,8 @@ public class Storage {
     /**
      * Saves every task in a simple, line-based format.
      *
-     * @param tasks the tasks to save
-     * @throws IOException if the data directory or save file cannot be written
+     * @param tasks The tasks to save.
+     * @throws IOException If the data directory or save file cannot be written.
      */
     public void save(List<Task> tasks) throws IOException {
         initialize();
@@ -79,7 +80,7 @@ public class Storage {
             try {
                 Files.move(temporaryFile, filePath, StandardCopyOption.ATOMIC_MOVE,
                         StandardCopyOption.REPLACE_EXISTING);
-            } catch (AtomicMoveNotSupportedException e) {
+            } catch (AtomicMoveNotSupportedException exception) {
                 Files.move(temporaryFile, filePath, StandardCopyOption.REPLACE_EXISTING);
             }
         } finally {
@@ -90,9 +91,9 @@ public class Storage {
     /**
      * Loads tasks from the save file.
      *
-     * @return the tasks stored in the save file
-     * @throws IOException if the save file cannot be read
-     * @throws CommandException if a saved task has an invalid format
+     * @return The tasks stored in the save file.
+     * @throws IOException If the save file cannot be read.
+     * @throws CommandException If a saved task has an invalid format.
      */
     public List<Task> load() throws IOException, CommandException {
         initialize();
@@ -110,22 +111,22 @@ public class Storage {
     /**
      * Converts one save-file line into a task object.
      *
-     * @param taskLine one line from the save file
-     * @param lineNumber the line number used in error reporting
-     * @return the task represented by the line
-     * @throws CommandException if the line has an invalid format
+     * @param taskLine One line from the save file.
+     * @param lineNumber The line number used in error reporting.
+     * @return The task represented by the line.
+     * @throws CommandException If the line has an invalid format.
      */
     private Task parseTask(String taskLine, int lineNumber) throws CommandException {
         String[] fields = taskLine.split("\\s*\\|\\s*", -1);
         Task task;
         try {
             task = switch (fields[0]) {
-            case "T" -> createTodo(fields, lineNumber);
-            case "D" -> createDeadline(fields, lineNumber);
-            case "E" -> createEvent(fields, lineNumber);
-            default -> throw invalidSavedTask(lineNumber);
+                case "T" -> createTodo(fields, lineNumber);
+                case "D" -> createDeadline(fields, lineNumber);
+                case "E" -> createEvent(fields, lineNumber);
+                default -> throw invalidSavedTask(lineNumber);
             };
-        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException e) {
+        } catch (ArrayIndexOutOfBoundsException | DateTimeParseException exception) {
             throw invalidSavedTask(lineNumber);
         }
 
@@ -143,10 +144,10 @@ public class Storage {
     /**
      * Creates a to-do from save-file fields.
      *
-     * @param fields the fields stored for the task
-     * @param lineNumber the line number used in error reporting
-     * @return the created to-do
-     * @throws CommandException if the fields are invalid
+     * @param fields The fields stored for the task.
+     * @param lineNumber The line number used in error reporting.
+     * @return The created to-do.
+     * @throws CommandException If the fields are invalid.
      */
     private Todo createTodo(String[] fields, int lineNumber) throws CommandException {
         if (fields.length != 3 || fields[2].isEmpty()) {
@@ -158,10 +159,10 @@ public class Storage {
     /**
      * Creates a deadline from save-file fields.
      *
-     * @param fields the fields stored for the task
-     * @param lineNumber the line number used in error reporting
-     * @return the created deadline
-     * @throws CommandException if the fields are invalid
+     * @param fields The fields stored for the task.
+     * @param lineNumber The line number used in error reporting.
+     * @return The created deadline.
+     * @throws CommandException If the fields are invalid.
      */
     private Deadline createDeadline(String[] fields, int lineNumber) throws CommandException {
         if (fields.length != 4 || fields[2].isEmpty() || fields[3].isEmpty()) {
@@ -173,10 +174,10 @@ public class Storage {
     /**
      * Creates an event from save-file fields.
      *
-     * @param fields the fields stored for the task
-     * @param lineNumber the line number used in error reporting
-     * @return the created event
-     * @throws CommandException if the fields are invalid
+     * @param fields The fields stored for the task.
+     * @param lineNumber The line number used in error reporting.
+     * @return The created event.
+     * @throws CommandException If the fields are invalid.
      */
     private Event createEvent(String[] fields, int lineNumber) throws CommandException {
         if (fields.length != 5 || fields[2].isEmpty() || fields[3].isEmpty() || fields[4].isEmpty()) {
@@ -188,8 +189,8 @@ public class Storage {
     /**
      * Creates a consistent error for malformed save-file data.
      *
-     * @param lineNumber the invalid line number, or zero when it is not available
-     * @return the loading exception
+     * @param lineNumber The invalid line number, or zero when it is not available.
+     * @return The loading exception.
      */
     private CommandException invalidSavedTask(int lineNumber) {
         if (lineNumber > 0) {

@@ -7,7 +7,7 @@ public class Todo extends Task {
     /**
      * Creates a to-do task.
      *
-     * @param description the task description
+     * @param description The task description.
      */
     public Todo(String description) {
         super(description);
@@ -16,7 +16,7 @@ public class Todo extends Task {
     /**
      * Returns this to-do in the task-list format.
      *
-     * @return the formatted to-do
+     * @return The formatted to-do.
      */
     @Override
     public String toString() {
@@ -26,7 +26,7 @@ public class Todo extends Task {
     /**
      * Returns this to-do in the save-file format.
      *
-     * @return the saved to-do text
+     * @return The saved to-do text.
      */
     @Override
     public String toFileString() {

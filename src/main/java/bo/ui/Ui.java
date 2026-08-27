@@ -3,7 +3,7 @@ package bo.ui;
 import java.util.List;
 import java.util.Scanner;
 
-import bo.task.*;
+import bo.task.Task;
 
 /**
  * Handles console input and output for Bo.
@@ -21,7 +21,7 @@ public class Ui {
     /**
      * Reports whether another command can be read.
      *
-     * @return true if another input line is available
+     * @return True if another input line is available.
      */
     public boolean hasNextCommand() {
         return scanner.hasNextLine();
@@ -30,7 +30,7 @@ public class Ui {
     /**
      * Reads one command from the user.
      *
-     * @return the entered command
+     * @return The entered command.
      */
     public String readCommand() {
         return scanner.nextLine().trim();
@@ -39,7 +39,7 @@ public class Ui {
     /**
      * Displays Bo's welcome message.
      *
-     * @param banner the banner to display
+     * @param banner The banner to display.
      */
     public void showWelcome(String banner) {
         showSeparator();
@@ -52,7 +52,7 @@ public class Ui {
     /**
      * Displays an error message for an invalid command.
      *
-     * @param message the error message
+     * @param message The error message.
      */
     public void showError(String message) {
         System.out.println(" " + message);
@@ -75,8 +75,8 @@ public class Ui {
     /**
      * Displays confirmation that a task was added.
      *
-     * @param task the added task
-     * @param taskCount the current number of tasks
+     * @param task The added task.
+     * @param taskCount The current number of tasks.
      */
     public void showTaskAdded(Task task, int taskCount) {
         System.out.println(" Got it. I've added this task:");
@@ -87,7 +87,7 @@ public class Ui {
     /**
      * Displays every task in the task list.
      *
-     * @param tasks the tasks to display
+     * @param tasks The tasks to display.
      */
     public void showTaskList(List<Task> tasks) {
         System.out.println(" Here are the tasks in your list:");
@@ -99,9 +99,9 @@ public class Ui {
     /**
      * Displays selected deadlines using their original task numbers.
      *
-     * @param taskIndexes the indexes of the deadlines to display
-     * @param tasks the full task list
-     * @param heading the heading to print before the deadlines
+     * @param taskIndexes The indexes of the deadlines to display.
+     * @param tasks The full task list.
+     * @param heading The heading to print before the deadlines.
      */
     public void showDeadlines(List<Integer> taskIndexes, List<Task> tasks, String heading) {
         System.out.println(heading);
@@ -118,7 +118,7 @@ public class Ui {
     /**
      * Displays confirmation that a task was marked as done.
      *
-     * @param task the marked task
+     * @param task The marked task.
      */
     public void showTaskMarked(Task task) {
         System.out.println(" Nice! I've marked this task as done:");
@@ -128,7 +128,7 @@ public class Ui {
     /**
      * Displays confirmation that a task was marked as not done.
      *
-     * @param task the unmarked task
+     * @param task The unmarked task.
      */
     public void showTaskUnmarked(Task task) {
         System.out.println(" OK, I've marked this task as not done yet:");
@@ -138,8 +138,8 @@ public class Ui {
     /**
      * Displays confirmation that a task was removed.
      *
-     * @param task the removed task
-     * @param taskCount the current number of tasks
+     * @param task The removed task.
+     * @param taskCount The current number of tasks.
      */
     public void showTaskDeleted(Task task, int taskCount) {
         System.out.println(" Noted. I've removed this task:");

@@ -16,8 +16,8 @@ public class Deadline extends Task {
     /**
      * Creates a deadline task.
      *
-     * @param description the task description
-     * @param by the deadline date
+     * @param description The task description.
+     * @param by The deadline date.
      */
     public Deadline(String description, LocalDate by) {
         super(description);
@@ -27,7 +27,7 @@ public class Deadline extends Task {
     /**
      * Returns the date by which this task is due.
      *
-     * @return this deadline's due date
+     * @return This deadline's due date.
      */
     public LocalDate getDueDate() {
         return by;
@@ -36,8 +36,8 @@ public class Deadline extends Task {
     /**
      * Formats a date in the style displayed by Bo.
      *
-     * @param date the date to format
-     * @return the formatted date
+     * @param date The date to format.
+     * @return The formatted date.
      */
     public static String formatDate(LocalDate date) {
         return date.format(DISPLAY_DATE_FORMAT);
@@ -46,7 +46,7 @@ public class Deadline extends Task {
     /**
      * Returns this deadline in the task-list format.
      *
-     * @return the formatted deadline
+     * @return The formatted deadline.
      */
     @Override
     public String toString() {
@@ -56,7 +56,7 @@ public class Deadline extends Task {
     /**
      * Returns this deadline in the save-file format.
      *
-     * @return the saved deadline text
+     * @return The saved deadline text.
      */
     @Override
     public String toFileString() {
