@@ -19,7 +19,7 @@ public class TaskList {
     /**
      * Creates a task list containing saved tasks.
      *
-     * @param tasks the tasks to place in this list
+     * @param tasks The tasks to place in this list.
      */
     public TaskList(List<Task> tasks) {
         this.tasks = new ArrayList<>(tasks);
@@ -28,7 +28,7 @@ public class TaskList {
     /**
      * Adds a task to the end of the list.
      *
-     * @param task the task to add
+     * @param task The task to add.
      */
     public void add(Task task) {
         tasks.add(task);
@@ -37,8 +37,8 @@ public class TaskList {
     /**
      * Inserts a task at a zero-based list position.
      *
-     * @param index the zero-based position at which to insert the task
-     * @param task the task to insert
+     * @param index The zero-based position at which to insert the task.
+     * @param task The task to insert.
      */
     public void add(int index, Task task) {
         tasks.add(index, task);
@@ -47,8 +47,8 @@ public class TaskList {
     /**
      * Removes and returns a task at a zero-based list position.
      *
-     * @param index the zero-based position of the task to remove
-     * @return the removed task
+     * @param index The zero-based position of the task to remove.
+     * @return The removed task.
      */
     public Task remove(int index) {
         return tasks.remove(index);
@@ -57,8 +57,8 @@ public class TaskList {
     /**
      * Returns a task at a zero-based list position.
      *
-     * @param index the zero-based position of the task
-     * @return the requested task
+     * @param index The zero-based position of the task.
+     * @return The requested task.
      */
     public Task get(int index) {
         return tasks.get(index);
@@ -67,7 +67,7 @@ public class TaskList {
     /**
      * Returns the number of tasks in the list.
      *
-     * @return the task count
+     * @return The task count.
      */
     public int size() {
         return tasks.size();
@@ -76,8 +76,8 @@ public class TaskList {
     /**
      * Checks whether a one-based task number refers to a task in this list.
      *
-     * @param taskNumber the task number shown to the user
-     * @return true if the task number is valid
+     * @param taskNumber The task number shown to the user.
+     * @return True if the task number is valid.
      */
     public boolean isValidTaskNumber(int taskNumber) {
         return taskNumber >= 1 && taskNumber <= tasks.size();
@@ -86,7 +86,7 @@ public class TaskList {
     /**
      * Returns a read-only snapshot of the current tasks.
      *
-     * @return the current tasks in list order
+     * @return The current tasks in list order.
      */
     public List<Task> asList() {
         return List.copyOf(tasks);

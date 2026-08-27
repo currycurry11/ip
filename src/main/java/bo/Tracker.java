@@ -1,14 +1,17 @@
 package bo;
 
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.time.LocalDate;
 
-import bo.storage.Storage;
-import bo.task.*;
-import bo.ui.Ui;
 import bo.command.CommandException;
+import bo.storage.Storage;
+import bo.task.Deadline;
+import bo.task.Task;
+import bo.task.TaskList;
+import bo.ui.Ui;
 
 /**
  * Stores and displays the tasks entered during one run of Bo.
@@ -21,7 +24,7 @@ public class Tracker {
     /**
      * Creates an empty tracker backed by Bo's default save file.
      *
-     * @param ui the user interface used to display task messages
+     * @param ui The user interface used to display task messages.
      */
     public Tracker(Ui ui) {
         this(ui, new Storage());
@@ -32,8 +35,8 @@ public class Tracker {
      * tests, where storage pointed at a temporary file should be used
      * instead of Bo's real save file.
      *
-     * @param ui the user interface used to display task messages
-     * @param storage the storage used to load and save tasks
+     * @param ui The user interface used to display task messages.
+     * @param storage The storage used to load and save tasks.
      */
     public Tracker(Ui ui, Storage storage) {
         this.storage = storage;
@@ -44,15 +47,16 @@ public class Tracker {
     /**
      * Adds a task to the tracker.
      *
-     * @param task the task object to store
+     * @param task The task object to store.
+     * @throws CommandException If the task list cannot be saved.
      */
     public void addTask(Task task) throws CommandException {
         taskList.add(task);
         try {
             saveTasks();
-        } catch (CommandException e) {
+        } catch (CommandException exception) {
             taskList.remove(taskList.size() - 1);
-            throw e;
+            throw exception;
         }
         ui.showTaskAdded(task, taskList.size());
     }
@@ -67,7 +71,7 @@ public class Tracker {
     /**
      * Displays incomplete deadlines that are due today or later, ordered by date.
      *
-     * @param currentDate the date used to decide which deadlines are upcoming
+     * @param currentDate The date used to decide which deadlines are upcoming.
      */
     public void printUpcomingDeadlines(LocalDate currentDate) {
         List<Integer> taskIndexes = getDeadlineIndexes();
@@ -81,7 +85,7 @@ public class Tracker {
     /**
      * Displays all deadlines due on one specified date.
      *
-     * @param dueDate the date to match
+     * @param dueDate The date to match.
      */
     public void printDeadlinesDueOn(LocalDate dueDate) {
         List<Integer> taskIndexes = getDeadlineIndexes();
@@ -90,9 +94,9 @@ public class Tracker {
     }
 
     /**
-     * Gets the indexes of all deadline tasks, ordered by their due dates.
+     * Returns the indexes of all deadline tasks, ordered by their due dates.
      *
-     * @return the ordered indexes of deadline tasks
+     * @return The ordered indexes of deadline tasks.
      */
     private List<Integer> getDeadlineIndexes() {
         List<Integer> taskIndexes = new ArrayList<>();
@@ -108,8 +112,8 @@ public class Tracker {
     /**
      * Prints deadline tasks using their original task numbers.
      *
-     * @param taskIndexes indexes of deadlines to display
-     * @param heading the heading to print before the deadlines
+     * @param taskIndexes Indexes of deadlines to display.
+     * @param heading The heading to print before the deadlines.
      */
     private void printDeadlineIndexes(List<Integer> taskIndexes, String heading) {
         ui.showDeadlines(taskIndexes, taskList.asList(), heading);
@@ -118,8 +122,8 @@ public class Tracker {
     /**
      * Checks whether a task number refers to a saved task.
      *
-     * @param taskNumber the task number entered by the user
-     * @return true if the task number is valid
+     * @param taskNumber The task number entered by the user.
+     * @return True if the task number is valid.
      */
     public boolean isValidTaskNumber(int taskNumber) {
         return taskList.isValidTaskNumber(taskNumber);
@@ -128,7 +132,8 @@ public class Tracker {
     /**
      * Marks a numbered task as completed.
      *
-     * @param taskNumber the task number displayed in the list
+     * @param taskNumber The task number displayed in the list.
+     * @throws CommandException If the task list cannot be saved.
      */
     public void markTask(int taskNumber) throws CommandException {
         Task task = taskList.get(taskNumber - 1);
@@ -136,11 +141,11 @@ public class Tracker {
         task.markAsDone();
         try {
             saveTasks();
-        } catch (CommandException e) {
+        } catch (CommandException exception) {
             if (!wasDone) {
                 task.markAsNotDone();
             }
-            throw e;
+            throw exception;
         }
         ui.showTaskMarked(task);
     }
@@ -148,7 +153,8 @@ public class Tracker {
     /**
      * Marks a numbered task as not completed.
      *
-     * @param taskNumber the task number displayed in the list
+     * @param taskNumber The task number displayed in the list.
+     * @throws CommandException If the task list cannot be saved.
      */
     public void unmarkTask(int taskNumber) throws CommandException {
         Task task = taskList.get(taskNumber - 1);
@@ -156,11 +162,11 @@ public class Tracker {
         task.markAsNotDone();
         try {
             saveTasks();
-        } catch (CommandException e) {
+        } catch (CommandException exception) {
             if (wasDone) {
                 task.markAsDone();
             }
-            throw e;
+            throw exception;
         }
         ui.showTaskUnmarked(task);
     }
@@ -168,16 +174,17 @@ public class Tracker {
     /**
      * Removes a numbered task and displays its confirmation message.
      *
-     * @param taskNumber the task number displayed in the list
+     * @param taskNumber The task number displayed in the list.
+     * @throws CommandException If the task list cannot be saved.
      */
     public void deleteTask(int taskNumber) throws CommandException {
         int taskIndex = taskNumber - 1;
         Task task = taskList.remove(taskIndex);
         try {
             saveTasks();
-        } catch (CommandException e) {
+        } catch (CommandException exception) {
             taskList.add(taskIndex, task);
-            throw e;
+            throw exception;
         }
         ui.showTaskDeleted(task, taskList.size());
     }
@@ -185,12 +192,12 @@ public class Tracker {
     /**
      * Saves the current task list and reports a file error as a command error.
      *
-     * @throws CommandException if the task list cannot be saved
+     * @throws CommandException If the task list cannot be saved.
      */
     private void saveTasks() throws CommandException {
         try {
             storage.save(taskList.asList());
-        } catch (java.io.IOException e) {
+        } catch (IOException exception) {
             throw new CommandException("I could not save your tasks. Please try again.");
         }
     }
@@ -198,12 +205,12 @@ public class Tracker {
     /**
      * Loads saved tasks, or returns an empty list if loading fails.
      *
-     * @return the loaded task list, or an empty list after a loading error
+     * @return The loaded task list, or an empty list after a loading error.
      */
     private TaskList loadTaskList() {
         try {
             return new TaskList(storage.load());
-        } catch (java.io.IOException | CommandException e) {
+        } catch (IOException | CommandException exception) {
             ui.showLoadingError();
             return new TaskList();
         }

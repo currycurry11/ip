@@ -1,11 +1,13 @@
 package bo.parser;
 
-import bo.command.CommandException;
-import bo.Tracker;
-import bo.task.*;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import bo.Tracker;
+import bo.command.CommandException;
+import bo.task.Deadline;
+import bo.task.Event;
+import bo.task.Todo;
 
 /**
  * Interprets user commands and performs the requested task operation.
@@ -14,9 +16,9 @@ public class Parser {
     /**
      * Validates and performs one user command.
      *
-     * @param tracker the tracker used to manage tasks
-     * @param command the command entered by the user
-     * @throws CommandException if the command is incomplete or unknown
+     * @param tracker The tracker used to manage tasks.
+     * @param command The command entered by the user.
+     * @throws CommandException If the command is incomplete or unknown.
      */
     public void executeCommand(Tracker tracker, String command) throws CommandException {
         if (command.isEmpty()) {
@@ -53,23 +55,23 @@ public class Parser {
     /**
      * Checks whether an input starts with a complete command word.
      *
-     * @param input the trimmed user input
-     * @param commandName the command word to check
-     * @return true if the input is the command or has arguments after it
+     * @param input The trimmed user input.
+     * @param commandName The command word to check.
+     * @return True if the input is the command or has arguments after it.
      */
     private boolean isCommand(String input, String commandName) {
         return input.equals(commandName)
                 || (input.startsWith(commandName)
-                && input.length() > commandName.length()
-                && Character.isWhitespace(input.charAt(commandName.length())));
+                        && input.length() > commandName.length()
+                        && Character.isWhitespace(input.charAt(commandName.length())));
     }
 
     /**
-     * Gets the trimmed text following a command word.
+     * Returns the trimmed text following a command word.
      *
-     * @param input the complete user input
-     * @param commandName the command word at the start of the input
-     * @return the command arguments, or an empty string when none were supplied
+     * @param input The complete user input.
+     * @param commandName The command word at the start of the input.
+     * @return The command arguments, or an empty string when none were supplied.
      */
     private String getArguments(String input, String commandName) {
         return input.substring(commandName.length()).trim();
@@ -78,9 +80,9 @@ public class Parser {
     /**
      * Adds a validated deadline task.
      *
-     * @param tracker the tracker used to manage tasks
-     * @param command the deadline command entered by the user
-     * @throws CommandException if the command is incomplete
+     * @param tracker The tracker used to manage tasks.
+     * @param command The deadline command entered by the user.
+     * @throws CommandException If the command is incomplete.
      */
     private void addDeadline(Tracker tracker, String command) throws CommandException {
         String details = getArguments(command, "deadline");
@@ -103,9 +105,9 @@ public class Parser {
     /**
      * Displays deadlines that fall on a date supplied by the user.
      *
-     * @param tracker the tracker used to manage tasks
-     * @param dateText the date entered after the due command
-     * @throws CommandException if no valid date is supplied
+     * @param tracker The tracker used to manage tasks.
+     * @param dateText The date entered after the due command.
+     * @throws CommandException If no valid date is supplied.
      */
     private void showDeadlinesDueOn(Tracker tracker, String dateText) throws CommandException {
         LocalDate date = parseDate(dateText, "due <yyyy-MM-dd>");
@@ -115,10 +117,10 @@ public class Parser {
     /**
      * Parses a date entered in ISO date format.
      *
-     * @param dateText the date text to parse
-     * @param usage the correct command usage to show if parsing fails
-     * @return the parsed date
-     * @throws CommandException if the date is blank or invalid
+     * @param dateText The date text to parse.
+     * @param usage The correct command usage to show if parsing fails.
+     * @return The parsed date.
+     * @throws CommandException If the date is blank or invalid.
      */
     private LocalDate parseDate(String dateText, String usage) throws CommandException {
         if (dateText.isEmpty()) {
@@ -126,7 +128,7 @@ public class Parser {
         }
         try {
             return LocalDate.parse(dateText);
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException exception) {
             throw new CommandException("Dates must use yyyy-MM-dd. Use: " + usage);
         }
     }
@@ -134,9 +136,9 @@ public class Parser {
     /**
      * Adds a validated event task.
      *
-     * @param tracker the tracker used to manage tasks
-     * @param command the event command entered by the user
-     * @throws CommandException if the command is incomplete
+     * @param tracker The tracker used to manage tasks.
+     * @param command The event command entered by the user.
+     * @throws CommandException If the command is incomplete.
      */
     private void addEvent(Tracker tracker, String command) throws CommandException {
         String details = getArguments(command, "event");
@@ -160,10 +162,10 @@ public class Parser {
     /**
      * Changes a numbered task's completion status.
      *
-     * @param tracker the tracker used to manage tasks
-     * @param taskNumberText the task number entered by the user
-     * @param shouldMarkDone whether the task should be marked as complete
-     * @throws CommandException if the task number is invalid
+     * @param tracker The tracker used to manage tasks.
+     * @param taskNumberText The task number entered by the user.
+     * @param shouldMarkDone Whether the task should be marked as complete.
+     * @throws CommandException If the task number is invalid.
      */
     private void changeTaskStatus(Tracker tracker, String taskNumberText, boolean shouldMarkDone)
             throws CommandException {
@@ -177,7 +179,7 @@ public class Parser {
             } else {
                 tracker.unmarkTask(taskNumber);
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             throw new CommandException("Use mark <task number> or unmark <task number>.");
         }
     }
@@ -185,9 +187,9 @@ public class Parser {
     /**
      * Deletes a numbered task after checking that its number is valid.
      *
-     * @param tracker the tracker used to manage tasks
-     * @param taskNumberText the task number entered by the user
-     * @throws CommandException if the task number is invalid
+     * @param tracker The tracker used to manage tasks.
+     * @param taskNumberText The task number entered by the user.
+     * @throws CommandException If the task number is invalid.
      */
     private void deleteTask(Tracker tracker, String taskNumberText) throws CommandException {
         try {
@@ -196,7 +198,7 @@ public class Parser {
                 throw new CommandException("That task number does not exist. Use list to see your tasks.");
             }
             tracker.deleteTask(taskNumber);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException exception) {
             throw new CommandException("Use delete <task number> to remove a task.");
         }
     }
@@ -204,7 +206,7 @@ public class Parser {
     /**
      * Returns the commands that Bo understands.
      *
-     * @return a multi-line command guide
+     * @return A multi-line command guide.
      */
     private String getCommandInstructions() {
         return "I don't recognize that command. Try one of these:\n"

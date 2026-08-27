@@ -1,34 +1,39 @@
 package bo.parser;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Path;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import bo.Tracker;
 import bo.command.CommandException;
+import bo.storage.Storage;
 import bo.ui.Ui;
 
 /**
  * Tests for {@link Parser}.
  *
- * Scope note: these tests only exercise commands where Parser throws
- * CommandException BEFORE calling any Tracker method (e.g. missing
- * description, missing "/by", bad date format, non-numeric task number).
- * Testing the "successful" paths (todo/deadline/event/mark/delete actually
- * succeeding) would require Tracker, which currently does real file I/O
- * in its constructor and cannot be faked - see the note sent alongside
- * these tests for why Tracker isn't unit tested the same way yet.
- *
- * A single shared Tracker instance is used only because these commands
- * never reach the point of calling any of its methods; it is never
- * asserted on.
+ * These tests cover commands that should throw CommandException (missing
+ * description, missing "/by", bad date format, non-numeric task number,
+ * empty task list). Each test uses a Tracker backed by a temporary save
+ * file so they never read or write Bo's real data/bo.txt file.
  */
 public class ParserTest {
 
+    @TempDir
+    Path tempDir;
+
     private final Parser parser = new Parser();
-    private final Tracker tracker = new Tracker(new Ui());
+    private Tracker tracker;
+
+    @BeforeEach
+    public void setUp() {
+        tracker = new Tracker(new Ui(), new Storage(tempDir.resolve("bo.txt")));
+    }
 
     // ---------- empty / unknown command ----------
 

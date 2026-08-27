@@ -10,9 +10,9 @@ public class Event extends Task {
     /**
      * Creates an event task.
      *
-     * @param description the event description
-     * @param from the start time text
-     * @param to the end time text
+     * @param description The event description.
+     * @param from The start time text.
+     * @param to The end time text.
      */
     public Event(String description, String from, String to) {
         super(description);
@@ -23,7 +23,7 @@ public class Event extends Task {
     /**
      * Returns this event in the task-list format.
      *
-     * @return the formatted event
+     * @return The formatted event.
      */
     @Override
     public String toString() {
@@ -33,7 +33,7 @@ public class Event extends Task {
     /**
      * Returns this event in the save-file format.
      *
-     * @return the saved event text
+     * @return The saved event text.
      */
     @Override
     public String toFileString() {
