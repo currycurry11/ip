@@ -24,6 +24,15 @@ Unless the user says otherwise, assume that you are assisting a student working 
 
 # Project-specific requirements
 
+## Java coding standard (mandatory)
+
+All Java code in this project (production and tests) must follow the SE-EDU
+basic + intermediate Java coding standard.
+
+Before writing, editing, or reviewing any Java, read and follow this reference:
+Reference: https://se-education.org/guides/conventions/java/intermediate.html
+That skill is required for every Java change; do not skip it.
+
 ## Java version:
 
 Ensure that Java 25 is used when running the application or build tasks. On macOS, use `sdk use java 25.0.3.fx-zulu` to switch to Java 25 if needed.
