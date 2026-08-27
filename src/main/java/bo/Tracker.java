@@ -19,12 +19,24 @@ public class Tracker {
     private final Ui ui;
 
     /**
-     * Creates an empty tracker.
+     * Creates an empty tracker backed by Bo's default save file.
      *
      * @param ui the user interface used to display task messages
      */
     public Tracker(Ui ui) {
-        storage = new Storage();
+        this(ui, new Storage());
+    }
+
+    /**
+     * Creates a tracker backed by a specific storage. Intended mainly for
+     * tests, where storage pointed at a temporary file should be used
+     * instead of Bo's real save file.
+     *
+     * @param ui the user interface used to display task messages
+     * @param storage the storage used to load and save tasks
+     */
+    public Tracker(Ui ui, Storage storage) {
+        this.storage = storage;
         this.ui = ui;
         taskList = loadTaskList();
     }

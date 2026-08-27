@@ -18,10 +18,31 @@ import bo.task.*;
 import bo.command.CommandException;
 
 /**
- * Saves Bo's tasks to a text file in the project data directory.
+ * Saves Bo's tasks to a text file.
  */
 public class Storage {
-    private static final Path FILE_PATH = Path.of("data", "bo.txt");
+    private static final Path DEFAULT_FILE_PATH = Path.of("data", "bo.txt");
+
+    private final Path filePath;
+
+    /**
+     * Creates storage that saves to Bo's default data file
+     * ({@code data/bo.txt}).
+     */
+    public Storage() {
+        this(DEFAULT_FILE_PATH);
+    }
+
+    /**
+     * Creates storage that saves to a specific file. Intended mainly for
+     * tests, where a temporary file should be used instead of Bo's real
+     * save file.
+     *
+     * @param filePath the file to read from and write to
+     */
+    public Storage(Path filePath) {
+        this.filePath = filePath;
+    }
 
     /**
      * Creates the data directory and an empty save file if they do not exist.
@@ -30,9 +51,11 @@ public class Storage {
      * @throws IOException if the directory or save file cannot be created
      */
     public void initialize() throws IOException {
-        Files.createDirectories(FILE_PATH.getParent());
+        if (filePath.getParent() != null) {
+            Files.createDirectories(filePath.getParent());
+        }
         try {
-            Files.createFile(FILE_PATH);
+            Files.createFile(filePath);
         } catch (FileAlreadyExistsException e) {
             // The existing save file must be preserved.
         }
@@ -49,14 +72,15 @@ public class Storage {
         List<String> taskLines = tasks.stream()
                 .map(Task::toFileString)
                 .toList();
-        Path temporaryFile = Files.createTempFile(FILE_PATH.getParent(), "bo-", ".tmp");
+        Path parentDir = filePath.getParent() != null ? filePath.getParent() : Path.of(".");
+        Path temporaryFile = Files.createTempFile(parentDir, "bo-", ".tmp");
         try {
             Files.write(temporaryFile, taskLines, StandardCharsets.UTF_8);
             try {
-                Files.move(temporaryFile, FILE_PATH, StandardCopyOption.ATOMIC_MOVE,
+                Files.move(temporaryFile, filePath, StandardCopyOption.ATOMIC_MOVE,
                         StandardCopyOption.REPLACE_EXISTING);
             } catch (AtomicMoveNotSupportedException e) {
-                Files.move(temporaryFile, FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(temporaryFile, filePath, StandardCopyOption.REPLACE_EXISTING);
             }
         } finally {
             Files.deleteIfExists(temporaryFile);
@@ -72,7 +96,7 @@ public class Storage {
      */
     public List<Task> load() throws IOException, CommandException {
         initialize();
-        List<String> taskLines = Files.readAllLines(FILE_PATH, StandardCharsets.UTF_8);
+        List<String> taskLines = Files.readAllLines(filePath, StandardCharsets.UTF_8);
         List<Task> tasks = new ArrayList<>();
         for (int i = 0; i < taskLines.size(); i++) {
             String taskLine = taskLines.get(i).trim();
