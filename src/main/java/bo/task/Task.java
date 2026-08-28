@@ -75,4 +75,14 @@ public abstract class Task {
         String status = isDone ? "[X]" : "[ ]";
         return status + " " + description;
     }
+
+    /**
+     * Checks whether this task's description contains the given keyword.
+     *
+     * @param keyword the text to search for
+     * @return true if the description contains the keyword
+     */
+    public boolean matchesKeyword(String keyword) {
+        return description.contains(keyword);
+    }
 }

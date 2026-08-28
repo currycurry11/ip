@@ -208,4 +208,19 @@ public class Tracker {
             return new TaskList();
         }
     }
+
+    /**
+     * Displays tasks whose description contains a given keyword.
+     *
+     * @param keyword the text to search for
+     */
+    public void findTasks(String keyword) {
+        List<Integer> taskIndexes = new ArrayList<>();
+        for (int i = 0; i < taskList.size(); i++) {
+            if (taskList.get(i).matchesKeyword(keyword)) {
+                taskIndexes.add(i);
+            }
+        }
+        ui.showMatchingTasks(taskIndexes, taskList.asList());
+    }
 }
