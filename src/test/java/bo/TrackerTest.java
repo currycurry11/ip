@@ -195,4 +195,42 @@ public class TrackerTest {
     private void assertDoesNotThrowWrapper(Runnable action) {
         action.run();
     }
+
+    // ---------- findTasks ----------
+    // findTasks is void and prints via Ui, so (like printUpcomingDeadlines
+    // above) it can't be asserted on directly without changing Ui to return
+    // testable output. These tests instead confirm it runs correctly across
+    // the situations most likely to break it: keyword found, not found, an
+    // empty task list, multiple matches, and matches spread across
+    // different task types.
+
+    @Test
+    public void findTasks_keywordMatchesOneTask_doesNotThrow() throws CommandException {
+        tracker.addTask(new Todo("read book"));
+        tracker.addTask(new Todo("buy milk"));
+
+        assertDoesNotThrowWrapper(() -> tracker.findTasks("book"));
+    }
+
+    @Test
+    public void findTasks_keywordMatchesNoTasks_doesNotThrow() throws CommandException {
+        tracker.addTask(new Todo("buy milk"));
+
+        assertDoesNotThrowWrapper(() -> tracker.findTasks("book"));
+    }
+
+    @Test
+    public void findTasks_emptyTaskList_doesNotThrow() {
+        assertDoesNotThrowWrapper(() -> tracker.findTasks("book"));
+    }
+
+    @Test
+    public void findTasks_keywordMatchesAcrossMultipleTaskTypes_doesNotThrow() throws CommandException {
+        tracker.addTask(new Todo("read book"));
+        tracker.addTask(new Deadline("return book", LocalDate.of(2024, 3, 2)));
+        tracker.addTask(new bo.task.Event("book club", "2pm", "4pm"));
+        tracker.addTask(new Todo("unrelated task"));
+
+        assertDoesNotThrowWrapper(() -> tracker.findTasks("book"));
+    }
 }

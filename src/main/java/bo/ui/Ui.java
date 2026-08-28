@@ -153,4 +153,21 @@ public class Ui {
     public void showSeparator() {
         System.out.println("----------------------------------------");
     }
+
+    /**
+     * Displays tasks that matched a search, using their original task numbers.
+     *
+     * @param taskIndexes the indexes of the matching tasks
+     * @param tasks the full task list
+     */
+    public void showMatchingTasks(List<Integer> taskIndexes, List<Task> tasks) {
+        System.out.println(" Here are the matching tasks in your list:");
+        if (taskIndexes.isEmpty()) {
+            System.out.println(" No matching tasks found.");
+            return;
+        }
+        for (int taskIndex : taskIndexes) {
+            System.out.println(" " + (taskIndex + 1) + "." + tasks.get(taskIndex));
+        }
+    }
 }

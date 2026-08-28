@@ -47,6 +47,8 @@ public class Parser {
             changeTaskStatus(tracker, getArguments(command, "unmark"), false);
         } else if (isCommand(command, "delete")) {
             deleteTask(tracker, getArguments(command, "delete"));
+        } else if (isCommand(command, "find")) {
+            findTasks(tracker, getArguments(command, "find"));
         } else {
             throw new CommandException(getCommandInstructions());
         }
@@ -204,6 +206,20 @@ public class Parser {
     }
 
     /**
+     * Displays tasks matching a keyword.
+     *
+     * @param tracker the tracker used to manage tasks
+     * @param keyword the keyword entered by the user
+     * @throws CommandException if no keyword is supplied
+     */
+    private void findTasks(Tracker tracker, String keyword) throws CommandException {
+        if (keyword.isEmpty()) {
+            throw new CommandException("A find needs a keyword. Use: find <keyword>");
+        }
+        tracker.findTasks(keyword);
+    }
+
+    /**
      * Returns the commands that Bo understands.
      *
      * @return A multi-line command guide.
@@ -214,6 +230,7 @@ public class Parser {
                 + "deadline <description> /by <yyyy-MM-dd>\n"
                 + "event <description> /from <start> /to <end>\n"
                 + "list\n"
+                + "find <keyword>\n"
                 + "upcoming\n"
                 + "due <yyyy-MM-dd>\n"
                 + "mark <task number>\n"

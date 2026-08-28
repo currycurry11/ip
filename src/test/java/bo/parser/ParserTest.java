@@ -191,6 +191,30 @@ public class ParserTest {
                 () -> parser.executeCommand(tracker, "delete 1"));
     }
 
+    // ---------- find ----------
+
+    @Test
+    public void executeCommand_findWithNoKeyword_throwsCommandException() {
+        CommandException exception = assertThrows(CommandException.class,
+                () -> parser.executeCommand(tracker, "find"));
+
+        assertTrue(exception.getMessage().contains("find needs a keyword"));
+    }
+
+    @Test
+    public void executeCommand_findWithOnlyWhitespaceKeyword_throwsCommandException() {
+        assertThrows(CommandException.class,
+                () -> parser.executeCommand(tracker, "find    "));
+    }
+
+    @Test
+    public void executeCommand_findWithKeyword_doesNotThrow() throws CommandException {
+        // No tasks exist yet, but a valid, non-empty keyword should still
+        // reach Tracker.findTasks without throwing (an empty result list is
+        // a valid outcome, not an error).
+        parser.executeCommand(tracker, "find book");
+    }
+
     // ---------- isCommand boundary: command word used as a prefix of another word ----------
 
     @Test
