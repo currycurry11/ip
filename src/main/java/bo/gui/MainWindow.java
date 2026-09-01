@@ -7,11 +7,10 @@ import bo.ui.GuiUi;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
 
 /**
  * Controller for Bo's FXML-defined main window.
@@ -25,6 +24,8 @@ public class MainWindow {
     private final GuiUi ui = new GuiUi();
     private final Tracker tracker = new Tracker(ui);
     private final Parser parser = new Parser();
+    private final Image userImage = new Image(MainWindow.class.getResourceAsStream("/images/DaUser.png"));
+    private final Image boImage = new Image(MainWindow.class.getResourceAsStream("/images/DaBo.png"));
 
     /**
      * Initializes automatic scrolling after the FXML controls are injected.
@@ -43,10 +44,11 @@ public class MainWindow {
         if (command.isEmpty()) {
             return;
         }
-        addDialog(command, true);
+        dialogContainer.getChildren().add(DialogBox.getUserDialog(command, userImage));
         userInput.clear();
         if (command.equals("bye")) {
-            addDialog("Bye. Hope to see you again soon!", false);
+            dialogContainer.getChildren().add(DialogBox.getBoDialog(
+                    "Bye. Hope to see you again soon!", boImage));
             return;
         }
         try {
@@ -56,17 +58,7 @@ public class MainWindow {
         }
         String response = ui.takeMessages();
         if (!response.isBlank()) {
-            addDialog(response.stripTrailing(), false);
+            dialogContainer.getChildren().add(DialogBox.getBoDialog(response.stripTrailing(), boImage));
         }
-    }
-
-    private void addDialog(String message, boolean isUser) {
-        Label label = new Label(message);
-        label.setWrapText(true);
-        label.getStyleClass().add(isUser ? "user-label" : "reply-label");
-        HBox row = new HBox(label);
-        row.setAlignment(isUser ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
-        row.setMaxWidth(Double.MAX_VALUE);
-        dialogContainer.getChildren().add(row);
     }
 }
