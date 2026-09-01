@@ -9,7 +9,7 @@
         <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER" AnchorPane.bottomAnchor="44.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <content><VBox fx:id="dialogContainer" spacing="8.0" fillWidth="true" /></content>
         </ScrollPane>
-        <TextField fx:id="userInput" onAction="#handleUserInput" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="76.0" />
-        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleUserInput" prefWidth="76.0" text="Send" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="0.0" />
+        <TextField fx:id="userInput" onAction="#handleUserInput" prefHeight="42.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="76.0" />
+        <Button fx:id="sendButton" mnemonicParsing="false" onAction="#handleUserInput" prefHeight="42.0" prefWidth="76.0" text="Send" AnchorPane.bottomAnchor="1.0" AnchorPane.rightAnchor="0.0" />
     </children>
 </AnchorPane>

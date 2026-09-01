@@ -11,6 +11,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 /**
  * Controller for Bo's FXML-defined main window.
@@ -49,6 +51,9 @@ public class MainWindow {
         if (command.equals("bye")) {
             dialogContainer.getChildren().add(DialogBox.getBoDialog(
                     "Bye. Hope to see you again soon!", boImage));
+            PauseTransition closeDelay = new PauseTransition(Duration.seconds(2));
+            closeDelay.setOnFinished(event -> userInput.getScene().getWindow().hide());
+            closeDelay.play();
             return;
         }
         try {
