@@ -1,0 +1,8 @@
+.root { -fx-background-color: #f0f4f8; }
+.text-field { -fx-background-color: white; -fx-padding: 8px; }
+.button { -fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; }
+.button:hover { -fx-background-color: #1d4ed8; }
+.scroll-pane, .scroll-pane .viewport { -fx-background-color: transparent; }
+.label { -fx-padding: 8px; -fx-background-radius: 10px; }
+.user-label { -fx-background-color: #bfdbfe; }
+.reply-label { -fx-background-color: #dcfce7; }
