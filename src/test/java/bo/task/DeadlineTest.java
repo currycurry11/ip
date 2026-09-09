@@ -86,4 +86,13 @@ public class DeadlineTest {
         assertEquals(date, deadline.getDueDate());
         assertTrue(deadline.getDueDate().isEqual(date));
     }
+
+    @Test
+    public void reschedule_replacesDueDate() {
+        Deadline deadline = new Deadline("renew passport", LocalDate.of(2025, 7, 15));
+
+        deadline.reschedule(LocalDate.of(2025, 8, 20));
+
+        assertEquals(LocalDate.of(2025, 8, 20), deadline.getDueDate());
+    }
 }

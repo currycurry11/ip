@@ -1,30 +1,36 @@
 # Bo User Guide
 
-// Update the title above to match the actual product name
-
-// Product screenshot goes here
-
-// Product intro goes here
+Bo supports postponing deadline tasks with the `snooze` and `reschedule`
+commands. Only deadline tasks can use these commands.
 
 ## Adding deadlines
 
-// Describe the action and its outcome.
-
-// Give examples of usage
-
-Example: `keyword (optional arguments)`
-
-// A description of the expected outcome goes here
-
-```
-expected output
+```text
+deadline <description> /by <yyyy-MM-dd>
 ```
 
-## Feature ABC
+Example: `deadline submit report /by 2026-10-10`
 
-// Feature details
+## Snoozing a deadline
 
+```text
+snooze <task number> <number of days>d
+```
 
-## Feature XYZ
+Example: `snooze 2 3d`
 
-// Feature details
+This extends task 2 by three days. Repeated snoozing is allowed.
+
+## Rescheduling a deadline
+
+```text
+reschedule <task number> <yyyy-MM-dd>
+```
+
+Example: `reschedule 2 2026-11-05`
+
+This replaces task 2's deadline with the specified date. Dates before today
+are rejected, while completed deadlines remain completed.
+
+The updated date is used by `list`, `upcoming`, and `due`. Only the new date
+is stored; the previous date is not retained.

@@ -137,6 +137,28 @@ public class TrackerTest {
         assertEquals("T | 1 | read book", lines.get(0));
     }
 
+    @Test
+    public void snoozeTask_deadline_advancesDateAndPersists() throws CommandException, IOException {
+        tracker.addTask(new Deadline("submit report", LocalDate.of(2999, 1, 1)));
+
+        tracker.snoozeTask(1, 3);
+
+        assertEquals("D | 0 | submit report | 2999-01-04",
+                Files.readAllLines(saveFile, StandardCharsets.UTF_8).get(0));
+    }
+
+    @Test
+    public void rescheduleTask_completedDeadline_replacesDateAndKeepsStatus()
+            throws CommandException, IOException {
+        tracker.addTask(new Deadline("submit report", LocalDate.of(2999, 1, 1)));
+        tracker.markTask(1);
+
+        tracker.rescheduleTask(1, LocalDate.of(2999, 2, 1));
+
+        assertEquals("D | 1 | submit report | 2999-02-01",
+                Files.readAllLines(saveFile, StandardCharsets.UTF_8).get(0));
+    }
+
     // ---------- deleteTask ----------
 
     @Test

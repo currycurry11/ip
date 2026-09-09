@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Path;
+import java.time.LocalDate;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.io.TempDir;
 import bo.Tracker;
 import bo.command.CommandException;
 import bo.storage.Storage;
+import bo.task.Deadline;
 import bo.ui.Ui;
 
 /**
@@ -189,6 +191,31 @@ public class ParserTest {
     public void executeCommand_deleteWithNoTasksYet_throwsCommandExceptionForInvalidNumber() {
         assertThrows(CommandException.class,
                 () -> parser.executeCommand(tracker, "delete 1"));
+    }
+
+    @Test
+    public void executeCommand_snoozeDeadline_updatesDate() throws CommandException {
+        tracker.addTask(new Deadline("submit report", LocalDate.of(2999, 1, 1)));
+
+        parser.executeCommand(tracker, "snooze 1 3d");
+
+        assertTrue(tracker.isValidTaskNumber(1));
+    }
+
+    @Test
+    public void executeCommand_snoozeWithWeeks_rejectsDuration() {
+        CommandException exception = assertThrows(CommandException.class,
+                () -> parser.executeCommand(tracker, "snooze 1 2w"));
+
+        assertTrue(exception.getMessage().contains("positive number of days"));
+    }
+
+    @Test
+    public void executeCommand_rescheduleWithPastDate_rejectsDate() throws CommandException {
+        tracker.addTask(new Deadline("submit report", LocalDate.of(2999, 1, 1)));
+
+        assertThrows(CommandException.class,
+                () -> parser.executeCommand(tracker, "reschedule 1 2000-01-01"));
     }
 
     // ---------- find ----------
