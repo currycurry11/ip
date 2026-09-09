@@ -146,6 +146,26 @@ public class Ui {
     }
 
     /**
+     * Displays confirmation that a deadline was snoozed.
+     *
+     * @param task The snoozed deadline.
+     */
+    public void showTaskSnoozed(Task task) {
+        System.out.println(" I've snoozed this deadline:");
+        System.out.println("   " + task);
+    }
+
+    /**
+     * Displays confirmation that a deadline was rescheduled.
+     *
+     * @param task The rescheduled deadline.
+     */
+    public void showTaskRescheduled(Task task) {
+        System.out.println(" I've rescheduled this deadline:");
+        System.out.println("   " + task);
+    }
+
+    /**
      * Prints a horizontal line to separate sections of Bo's messages.
      */
     public void showSeparator() {

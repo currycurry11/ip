@@ -11,7 +11,7 @@ public class Deadline extends Task {
     private static final DateTimeFormatter DISPLAY_DATE_FORMAT =
             DateTimeFormatter.ofPattern("MMM dd uuuu", Locale.ENGLISH);
 
-    private final LocalDate by;
+    private LocalDate by;
 
     /**
      * Creates a deadline task.
@@ -31,6 +31,15 @@ public class Deadline extends Task {
      */
     public LocalDate getDueDate() {
         return by;
+    }
+
+    /**
+     * Replaces this deadline's due date.
+     *
+     * @param newDueDate The replacement due date.
+     */
+    public void reschedule(LocalDate newDueDate) {
+        by = newDueDate;
     }
 
     /**

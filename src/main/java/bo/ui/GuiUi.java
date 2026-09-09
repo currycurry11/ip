@@ -52,6 +52,16 @@ public class GuiUi extends Ui {
     }
 
     @Override
+    public void showTaskSnoozed(Task task) {
+        messages.append("Snoozed: ").append(task).append('\n');
+    }
+
+    @Override
+    public void showTaskRescheduled(Task task) {
+        messages.append("Rescheduled: ").append(task).append('\n');
+    }
+
+    @Override
     public void showDeadlines(List<Integer> taskIndexes, List<Task> tasks, String heading) {
         messages.append(heading).append('\n');
         appendIndexedTasks(taskIndexes, tasks);
