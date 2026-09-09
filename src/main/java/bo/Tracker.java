@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 
 import bo.command.CommandException;
 import bo.storage.Storage;
@@ -100,14 +101,12 @@ public class Tracker {
      * @return The ordered indexes of deadline tasks.
      */
     private List<Integer> getDeadlineIndexes() {
-        List<Integer> taskIndexes = new ArrayList<>();
-        for (int i = 0; i < taskList.size(); i++) {
-            if (taskList.get(i) instanceof Deadline) {
-                taskIndexes.add(i);
-            }
-        }
-        taskIndexes.sort(Comparator.comparing(index -> ((Deadline) taskList.get(index)).getDueDate()));
-        return taskIndexes;
+        return IntStream.range(0, taskList.size())
+                .filter(index -> taskList.get(index) instanceof Deadline)
+                .boxed()
+                .sorted(Comparator.comparing(index ->
+                        ((Deadline) taskList.get(index)).getDueDate()))
+                .toList();
     }
 
     /**
