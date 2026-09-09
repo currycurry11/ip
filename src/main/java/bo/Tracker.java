@@ -116,6 +116,8 @@ public class Tracker {
      * @param heading The heading to print before the deadlines.
      */
     private void printDeadlineIndexes(List<Integer> taskIndexes, String heading) {
+        assert taskIndexes.stream().allMatch(index -> taskList.get(index) instanceof Deadline)
+                : "Deadline indexes must refer only to deadline tasks";
         ui.showDeadlines(taskIndexes, taskList.asList(), heading);
     }
 
@@ -136,6 +138,8 @@ public class Tracker {
      * @throws CommandException If the task list cannot be saved.
      */
     public void markTask(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before marking a task";
         Task task = taskList.get(taskNumber - 1);
         boolean wasDone = task.isDone();
         task.markAsDone();
@@ -157,6 +161,8 @@ public class Tracker {
      * @throws CommandException If the task list cannot be saved.
      */
     public void unmarkTask(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before unmarking a task";
         Task task = taskList.get(taskNumber - 1);
         boolean wasDone = task.isDone();
         task.markAsNotDone();
@@ -178,6 +184,8 @@ public class Tracker {
      * @throws CommandException If the task list cannot be saved.
      */
     public void deleteTask(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before deleting a task";
         int taskIndex = taskNumber - 1;
         Task task = taskList.remove(taskIndex);
         try {
