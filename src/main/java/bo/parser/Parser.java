@@ -23,35 +23,65 @@ public class Parser {
     public void executeCommand(Tracker tracker, String command) throws CommandException {
         if (command.isEmpty()) {
             throw new CommandException("Please enter a command. Type an action such as todo or list.");
-        } else if (command.equals("list")) {
-            tracker.printTasks();
-        } else if (command.equals("upcoming")) {
-            tracker.printUpcomingDeadlines(LocalDate.now());
-        } else if (isCommand(command, "upcoming")) {
-            throw new CommandException("Use upcoming without extra text to see future deadlines.");
-        } else if (isCommand(command, "due")) {
-            showDeadlinesDueOn(tracker, getArguments(command, "due"));
-        } else if (isCommand(command, "todo")) {
-            String description = getArguments(command, "todo");
-            if (description.isEmpty()) {
-                throw new CommandException("A todo needs a description. Use: todo <description>");
-            }
-            tracker.addTask(new Todo(description));
-        } else if (isCommand(command, "deadline")) {
-            addDeadline(tracker, command);
-        } else if (isCommand(command, "event")) {
-            addEvent(tracker, command);
-        } else if (isCommand(command, "mark")) {
-            changeTaskStatus(tracker, getArguments(command, "mark"), true);
-        } else if (isCommand(command, "unmark")) {
-            changeTaskStatus(tracker, getArguments(command, "unmark"), false);
-        } else if (isCommand(command, "delete")) {
-            deleteTask(tracker, getArguments(command, "delete"));
-        } else if (isCommand(command, "find")) {
-            findTasks(tracker, getArguments(command, "find"));
-        } else {
-            throw new CommandException(getCommandInstructions());
         }
+
+        String commandName = command.split("\\s+", 2)[0];
+        switch (commandName) {
+        case "list":
+            if (command.equals("list")) {
+                tracker.printTasks();
+                return;
+            }
+            break;
+        case "upcoming":
+            if (command.equals("upcoming")) {
+                tracker.printUpcomingDeadlines(LocalDate.now());
+                return;
+            }
+            throw new CommandException("Use upcoming without extra text to see future deadlines.");
+        case "due":
+            showDeadlinesDueOn(tracker, getArguments(command, "due"));
+            return;
+        case "todo":
+            addTodo(tracker, command);
+            return;
+        case "deadline":
+            addDeadline(tracker, command);
+            return;
+        case "event":
+            addEvent(tracker, command);
+            return;
+        case "mark":
+            changeTaskStatus(tracker, getArguments(command, "mark"), true);
+            return;
+        case "unmark":
+            changeTaskStatus(tracker, getArguments(command, "unmark"), false);
+            return;
+        case "delete":
+            deleteTask(tracker, getArguments(command, "delete"));
+            return;
+        case "find":
+            findTasks(tracker, getArguments(command, "find"));
+            return;
+        default:
+            break;
+        }
+        throw new CommandException(getCommandInstructions());
+    }
+
+    /**
+     * Adds a to-do task after validating its description.
+     *
+     * @param tracker The tracker used to manage tasks.
+     * @param command The to-do command entered by the user.
+     * @throws CommandException If the description is missing or saving fails.
+     */
+    private void addTodo(Tracker tracker, String command) throws CommandException {
+        String description = getArguments(command, "todo");
+        if (description.isEmpty()) {
+            throw new CommandException("A todo needs a description. Use: todo <description>");
+        }
+        tracker.addTask(new Todo(description));
     }
 
     /**
