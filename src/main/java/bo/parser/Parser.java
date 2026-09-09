@@ -76,6 +76,8 @@ public class Parser {
      * @return The command arguments, or an empty string when none were supplied.
      */
     private String getArguments(String input, String commandName) {
+        assert isCommand(input, commandName)
+                : "Arguments can only be extracted from a matching command";
         return input.substring(commandName.length()).trim();
     }
 

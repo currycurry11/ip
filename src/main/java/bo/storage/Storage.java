@@ -118,6 +118,8 @@ public class Storage {
      */
     private Task parseTask(String taskLine, int lineNumber) throws CommandException {
         String[] fields = taskLine.split("\\s*\\|\\s*", -1);
+        assert fields.length > 0 && !fields[0].isEmpty()
+                : "A non-empty saved line must contain a task type field";
         Task task;
         try {
             task = switch (fields[0]) {
