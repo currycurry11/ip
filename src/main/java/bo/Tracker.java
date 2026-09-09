@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import bo.command.CommandException;
 import bo.storage.Storage;
@@ -137,16 +138,7 @@ public class Tracker {
      */
     public void markTask(int taskNumber) throws CommandException {
         Task task = taskList.get(taskNumber - 1);
-        boolean wasDone = task.isDone();
-        task.markAsDone();
-        try {
-            saveTasks();
-        } catch (CommandException exception) {
-            if (!wasDone) {
-                task.markAsNotDone();
-            }
-            throw exception;
-        }
+        updateTaskStatus(task, Task::markAsDone, Task::markAsNotDone);
         ui.showTaskMarked(task);
     }
 
@@ -158,17 +150,30 @@ public class Tracker {
      */
     public void unmarkTask(int taskNumber) throws CommandException {
         Task task = taskList.get(taskNumber - 1);
+        updateTaskStatus(task, Task::markAsNotDone, Task::markAsDone);
+        ui.showTaskUnmarked(task);
+    }
+
+    /**
+     * Changes and persists a task status, restoring its previous status if saving fails.
+     *
+     * @param task The task whose status is changed.
+     * @param applyStatus The requested status change.
+     * @param restoreStatus The status change that reverses the requested change.
+     * @throws CommandException If the updated task list cannot be saved.
+     */
+    private void updateTaskStatus(Task task, Consumer<Task> applyStatus, Consumer<Task> restoreStatus)
+            throws CommandException {
         boolean wasDone = task.isDone();
-        task.markAsNotDone();
+        applyStatus.accept(task);
         try {
             saveTasks();
         } catch (CommandException exception) {
-            if (wasDone) {
-                task.markAsDone();
+            if (task.isDone() != wasDone) {
+                restoreStatus.accept(task);
             }
             throw exception;
         }
-        ui.showTaskUnmarked(task);
     }
 
     /**
