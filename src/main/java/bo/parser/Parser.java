@@ -171,18 +171,12 @@ public class Parser {
      */
     private void changeTaskStatus(Tracker tracker, String taskNumberText, boolean shouldMarkDone)
             throws CommandException {
-        try {
-            int taskNumber = Integer.parseInt(taskNumberText);
-            if (!tracker.isValidTaskNumber(taskNumber)) {
-                throw new CommandException("That task number does not exist. Use list to see your tasks.");
-            }
-            if (shouldMarkDone) {
-                tracker.markTask(taskNumber);
-            } else {
-                tracker.unmarkTask(taskNumber);
-            }
-        } catch (NumberFormatException exception) {
-            throw new CommandException("Use mark <task number> or unmark <task number>.");
+        int taskNumber = parseTaskNumber(tracker, taskNumberText,
+                "Use mark <task number> or unmark <task number>.");
+        if (shouldMarkDone) {
+            tracker.markTask(taskNumber);
+        } else {
+            tracker.unmarkTask(taskNumber);
         }
     }
 
@@ -194,14 +188,30 @@ public class Parser {
      * @throws CommandException If the task number is invalid.
      */
     private void deleteTask(Tracker tracker, String taskNumberText) throws CommandException {
+        int taskNumber = parseTaskNumber(tracker, taskNumberText,
+                "Use delete <task number> to remove a task.");
+        tracker.deleteTask(taskNumber);
+    }
+
+    /**
+     * Parses and validates a user-supplied one-based task number.
+     *
+     * @param tracker The tracker used to validate the task number.
+     * @param taskNumberText The task number entered by the user.
+     * @param formatMessage The error message for non-numeric input.
+     * @return The validated task number.
+     * @throws CommandException If the text is not numeric or refers to no task.
+     */
+    private int parseTaskNumber(Tracker tracker, String taskNumberText, String formatMessage)
+            throws CommandException {
         try {
             int taskNumber = Integer.parseInt(taskNumberText);
             if (!tracker.isValidTaskNumber(taskNumber)) {
                 throw new CommandException("That task number does not exist. Use list to see your tasks.");
             }
-            tracker.deleteTask(taskNumber);
+            return taskNumber;
         } catch (NumberFormatException exception) {
-            throw new CommandException("Use delete <task number> to remove a task.");
+            throw new CommandException(formatMessage);
         }
     }
 
