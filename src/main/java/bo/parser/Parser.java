@@ -63,6 +63,12 @@ public class Parser {
         case "find":
             findTasks(tracker, getArguments(command, "find"));
             return;
+        case "snooze":
+            snoozeTask(tracker, getArguments(command, "snooze"));
+            return;
+        case "reschedule":
+            rescheduleTask(tracker, getArguments(command, "reschedule"));
+            return;
         default:
             break;
         }
@@ -82,6 +88,41 @@ public class Parser {
             throw new CommandException("A todo needs a description. Use: todo <description>");
         }
         tracker.addTask(new Todo(description));
+    }
+
+    private void snoozeTask(Tracker tracker, String arguments) throws CommandException {
+        String[] parts = arguments.split("\\s+");
+        if (parts.length != 2) {
+            throw new CommandException("Use snooze <task number> <number of days>d.");
+        }
+        if (!parts[1].matches("[1-9][0-9]*d")) {
+            throw new CommandException("Snooze duration must be a positive number of days. "
+                    + "Use: snooze <task number> <number of days>d");
+        }
+        int taskNumber = parseTaskNumber(tracker, parts[0],
+                "Use snooze <task number> <number of days>d.");
+        int days;
+        try {
+            days = Integer.parseInt(parts[1].substring(0, parts[1].length() - 1));
+        } catch (NumberFormatException exception) {
+            throw new CommandException("Snooze duration is too large. Use: snooze <task number> <number of days>d");
+        }
+        tracker.snoozeTask(taskNumber, days);
+    }
+
+    private void rescheduleTask(Tracker tracker, String arguments) throws CommandException {
+        String[] parts = arguments.split("\\s+");
+        if (parts.length != 2) {
+            throw new CommandException("A reschedule needs a task number and date. "
+                    + "Use: reschedule <task number> <yyyy-MM-dd>");
+        }
+        int taskNumber = parseTaskNumber(tracker, parts[0],
+                "Use reschedule <task number> <yyyy-MM-dd>.");
+        LocalDate newDate = parseDate(parts[1], "reschedule <task number> <yyyy-MM-dd>");
+        if (newDate.isBefore(LocalDate.now())) {
+            throw new CommandException("A deadline cannot be rescheduled to a past date.");
+        }
+        tracker.rescheduleTask(taskNumber, newDate);
     }
 
     /**

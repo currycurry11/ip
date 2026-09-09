@@ -96,6 +96,63 @@ public class Tracker {
     }
 
     /**
+     * Postpones a deadline by a positive number of days and saves the result.
+     *
+     * @param taskNumber The numbered deadline to postpone.
+     * @param days The number of days to add.
+     * @throws CommandException If the task is not a deadline or cannot be saved.
+     */
+    public void snoozeTask(int taskNumber, int days) throws CommandException {
+        Deadline deadline = getDeadline(taskNumber);
+        LocalDate oldDate = deadline.getDueDate();
+        LocalDate newDate = oldDate.plusDays(days);
+        ensureNotPast(newDate);
+        updateDeadline(deadline, newDate);
+        ui.showTaskSnoozed(deadline);
+    }
+
+    /**
+     * Replaces a deadline date and saves the result.
+     *
+     * @param taskNumber The numbered deadline to reschedule.
+     * @param newDueDate The replacement date.
+     * @throws CommandException If the task is not a deadline or cannot be saved.
+     */
+    public void rescheduleTask(int taskNumber, LocalDate newDueDate) throws CommandException {
+        Deadline deadline = getDeadline(taskNumber);
+        ensureNotPast(newDueDate);
+        updateDeadline(deadline, newDueDate);
+        ui.showTaskRescheduled(deadline);
+    }
+
+    private Deadline getDeadline(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before retrieving a deadline";
+        Task task = taskList.get(taskNumber - 1);
+        if (!(task instanceof Deadline)) {
+            throw new CommandException("Only deadline tasks can be snoozed or rescheduled.");
+        }
+        return (Deadline) task;
+    }
+
+    private void updateDeadline(Deadline deadline, LocalDate newDueDate) throws CommandException {
+        LocalDate oldDate = deadline.getDueDate();
+        deadline.reschedule(newDueDate);
+        try {
+            saveTasks();
+        } catch (CommandException exception) {
+            deadline.reschedule(oldDate);
+            throw exception;
+        }
+    }
+
+    private void ensureNotPast(LocalDate dueDate) throws CommandException {
+        if (dueDate.isBefore(LocalDate.now())) {
+            throw new CommandException("A deadline cannot be rescheduled to a past date.");
+        }
+    }
+
+    /**
      * Returns the indexes of all deadline tasks, ordered by their due dates.
      *
      * @return The ordered indexes of deadline tasks.
