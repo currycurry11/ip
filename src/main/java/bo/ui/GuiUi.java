@@ -54,14 +54,22 @@ public class GuiUi extends Ui {
     @Override
     public void showDeadlines(List<Integer> taskIndexes, List<Task> tasks, String heading) {
         messages.append(heading).append('\n');
-        for (int taskIndex : taskIndexes) {
-            messages.append(taskIndex + 1).append('.').append(tasks.get(taskIndex)).append('\n');
-        }
+        appendIndexedTasks(taskIndexes, tasks);
     }
 
     @Override
     public void showMatchingTasks(List<Integer> taskIndexes, List<Task> tasks) {
         messages.append("Matching tasks:\n");
+        appendIndexedTasks(taskIndexes, tasks);
+    }
+
+    /**
+     * Appends tasks using their zero-based indexes and one-based task numbers.
+     *
+     * @param taskIndexes The indexes of the tasks to append.
+     * @param tasks The full task list.
+     */
+    private void appendIndexedTasks(List<Integer> taskIndexes, List<Task> tasks) {
         for (int taskIndex : taskIndexes) {
             messages.append(taskIndex + 1).append('.').append(tasks.get(taskIndex)).append('\n');
         }

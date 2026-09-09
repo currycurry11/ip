@@ -110,9 +110,7 @@ public class Ui {
             return;
         }
 
-        for (int taskIndex : taskIndexes) {
-            System.out.println(" " + (taskIndex + 1) + "." + tasks.get(taskIndex));
-        }
+        showIndexedTasks(taskIndexes, tasks);
     }
 
     /**
@@ -166,6 +164,16 @@ public class Ui {
             System.out.println(" No matching tasks found.");
             return;
         }
+        showIndexedTasks(taskIndexes, tasks);
+    }
+
+    /**
+     * Displays tasks using their zero-based indexes and one-based task numbers.
+     *
+     * @param taskIndexes The indexes of the tasks to display.
+     * @param tasks The full task list.
+     */
+    private void showIndexedTasks(List<Integer> taskIndexes, List<Task> tasks) {
         for (int taskIndex : taskIndexes) {
             System.out.println(" " + (taskIndex + 1) + "." + tasks.get(taskIndex));
         }
