@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
 import bo.command.CommandException;
@@ -115,6 +116,8 @@ public class Tracker {
      * @param heading The heading to print before the deadlines.
      */
     private void printDeadlineIndexes(List<Integer> taskIndexes, String heading) {
+        assert taskIndexes.stream().allMatch(index -> taskList.get(index) instanceof Deadline)
+                : "Deadline indexes must refer only to deadline tasks";
         ui.showDeadlines(taskIndexes, taskList.asList(), heading);
     }
 
@@ -135,17 +138,10 @@ public class Tracker {
      * @throws CommandException If the task list cannot be saved.
      */
     public void markTask(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before marking a task";
         Task task = taskList.get(taskNumber - 1);
-        boolean wasDone = task.isDone();
-        task.markAsDone();
-        try {
-            saveTasks();
-        } catch (CommandException exception) {
-            if (!wasDone) {
-                task.markAsNotDone();
-            }
-            throw exception;
-        }
+        updateTaskStatus(task, Task::markAsDone, Task::markAsNotDone);
         ui.showTaskMarked(task);
     }
 
@@ -156,18 +152,33 @@ public class Tracker {
      * @throws CommandException If the task list cannot be saved.
      */
     public void unmarkTask(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before unmarking a task";
         Task task = taskList.get(taskNumber - 1);
+        updateTaskStatus(task, Task::markAsNotDone, Task::markAsDone);
+        ui.showTaskUnmarked(task);
+    }
+
+    /**
+     * Changes and persists a task status, restoring its previous status if saving fails.
+     *
+     * @param task The task whose status is changed.
+     * @param applyStatus The requested status change.
+     * @param restoreStatus The status change that reverses the requested change.
+     * @throws CommandException If the updated task list cannot be saved.
+     */
+    private void updateTaskStatus(Task task, Consumer<Task> applyStatus, Consumer<Task> restoreStatus)
+            throws CommandException {
         boolean wasDone = task.isDone();
-        task.markAsNotDone();
+        applyStatus.accept(task);
         try {
             saveTasks();
         } catch (CommandException exception) {
-            if (wasDone) {
-                task.markAsDone();
+            if (task.isDone() != wasDone) {
+                restoreStatus.accept(task);
             }
             throw exception;
         }
-        ui.showTaskUnmarked(task);
     }
 
     /**
@@ -177,6 +188,8 @@ public class Tracker {
      * @throws CommandException If the task list cannot be saved.
      */
     public void deleteTask(int taskNumber) throws CommandException {
+        assert taskList.isValidTaskNumber(taskNumber)
+                : "Task number must be validated before deleting a task";
         int taskIndex = taskNumber - 1;
         Task task = taskList.remove(taskIndex);
         try {

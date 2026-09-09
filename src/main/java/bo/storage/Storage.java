@@ -118,6 +118,8 @@ public class Storage {
      */
     private Task parseTask(String taskLine, int lineNumber) throws CommandException {
         String[] fields = taskLine.split("\\s*\\|\\s*", -1);
+        assert fields.length > 0 && !fields[0].isEmpty()
+                : "A non-empty saved line must contain a task type field";
         Task task;
         try {
             task = switch (fields[0]) {
@@ -150,9 +152,8 @@ public class Storage {
      * @throws CommandException If the fields are invalid.
      */
     private Todo createTodo(String[] fields, int lineNumber) throws CommandException {
-        if (fields.length != 3 || fields[2].isEmpty()) {
-            throw invalidSavedTask(lineNumber);
-        }
+        validateFieldCount(fields, 3, lineNumber);
+        validateNonEmptyFields(fields, lineNumber, 2);
         return new Todo(fields[2]);
     }
 
@@ -165,9 +166,8 @@ public class Storage {
      * @throws CommandException If the fields are invalid.
      */
     private Deadline createDeadline(String[] fields, int lineNumber) throws CommandException {
-        if (fields.length != 4 || fields[2].isEmpty() || fields[3].isEmpty()) {
-            throw invalidSavedTask(lineNumber);
-        }
+        validateFieldCount(fields, 4, lineNumber);
+        validateNonEmptyFields(fields, lineNumber, 2, 3);
         return new Deadline(fields[2], LocalDate.parse(fields[3]));
     }
 
@@ -180,10 +180,41 @@ public class Storage {
      * @throws CommandException If the fields are invalid.
      */
     private Event createEvent(String[] fields, int lineNumber) throws CommandException {
-        if (fields.length != 5 || fields[2].isEmpty() || fields[3].isEmpty() || fields[4].isEmpty()) {
+        validateFieldCount(fields, 5, lineNumber);
+        validateNonEmptyFields(fields, lineNumber, 2, 3, 4);
+        return new Event(fields[2], fields[3], fields[4]);
+    }
+
+    /**
+     * Checks that a saved task has exactly the expected number of fields.
+     *
+     * @param fields The fields stored for the task.
+     * @param expectedCount The required number of fields.
+     * @param lineNumber The line number used in error reporting.
+     * @throws CommandException If the field count is incorrect.
+     */
+    private void validateFieldCount(String[] fields, int expectedCount, int lineNumber)
+            throws CommandException {
+        if (fields.length != expectedCount) {
             throw invalidSavedTask(lineNumber);
         }
-        return new Event(fields[2], fields[3], fields[4]);
+    }
+
+    /**
+     * Checks that the specified saved task fields are not empty.
+     *
+     * @param fields The fields stored for the task.
+     * @param lineNumber The line number used in error reporting.
+     * @param fieldIndexes The indexes of required non-empty fields.
+     * @throws CommandException If any required field is empty.
+     */
+    private void validateNonEmptyFields(String[] fields, int lineNumber, int... fieldIndexes)
+            throws CommandException {
+        for (int fieldIndex : fieldIndexes) {
+            if (fields[fieldIndex].isEmpty()) {
+                throw invalidSavedTask(lineNumber);
+            }
+        }
     }
 
     /**
