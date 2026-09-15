@@ -6,6 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 
 /**
  * Displays a message together with the image of its speaker.
@@ -24,9 +25,17 @@ public class DialogBox extends HBox {
         speakerImage.setFitWidth(52);
         speakerImage.setPreserveRatio(true);
 
+        getStyleClass().add(isUser ? "user-dialog" : "bo-dialog");
+        setMaxWidth(Double.MAX_VALUE);
         setAlignment(isUser ? Pos.TOP_RIGHT : Pos.TOP_LEFT);
         setSpacing(8);
         setPadding(new Insets(5));
+
+        if (!isUser) {
+            messageLabel.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(messageLabel, Priority.ALWAYS);
+        }
+
         getChildren().addAll(isUser ? messageLabel : speakerImage,
                 isUser ? speakerImage : messageLabel);
     }
