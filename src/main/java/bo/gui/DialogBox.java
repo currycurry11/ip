@@ -61,4 +61,18 @@ public class DialogBox extends HBox {
     public static DialogBox getBoDialog(String message, Image image) {
         return new DialogBox(message, image, false);
     }
+
+    /**
+     * Creates an error dialog spoken by Bo.
+     *
+     * @param message error text
+     * @param image Bo image
+     * @return an error dialog box
+     */
+    public static DialogBox getErrorDialog(String message, Image image) {
+        DialogBox dialogBox = new DialogBox(message, image, false);
+        dialogBox.getStyleClass().add("error-dialog");
+        dialogBox.messageLabel.getStyleClass().add("error-label");
+        return dialogBox;
+    }
 }

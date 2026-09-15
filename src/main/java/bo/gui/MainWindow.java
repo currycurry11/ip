@@ -3,6 +3,7 @@ package bo.gui;
 import bo.Tracker;
 import bo.command.CommandException;
 import bo.parser.Parser;
+import bo.ui.GuiMessage;
 import bo.ui.GuiUi;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -61,9 +62,11 @@ public class MainWindow {
         } catch (CommandException exception) {
             ui.showError(exception.getMessage());
         }
-        String response = ui.takeMessages();
-        if (!response.isBlank()) {
-            dialogContainer.getChildren().add(DialogBox.getBoDialog(response.stripTrailing(), boImage));
+        for (GuiMessage message : ui.takeMessages()) {
+            DialogBox dialog = message.isError()
+                    ? DialogBox.getErrorDialog(message.text(), boImage)
+                    : DialogBox.getBoDialog(message.text(), boImage);
+            dialogContainer.getChildren().add(dialog);
         }
     }
 }
