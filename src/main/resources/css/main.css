@@ -1,4 +1,4 @@
-.root { -fx-background-color: #f0f4f8; -fx-background-image: url('../images/background1.jpg'); -fx-background-size: cover; }
+.root { -fx-background-color: #f0f4f8; -fx-background-image: url('../images/background-forest.png'); -fx-background-size: cover; }
 .text-field { -fx-background-color: white; -fx-padding: 8px; -fx-pref-height: 42px; }
 .button { -fx-background-color: #2563eb; -fx-text-fill: white; -fx-font-weight: bold; -fx-pref-height: 42px; }
 .button:hover { -fx-background-color: #1d4ed8; }
