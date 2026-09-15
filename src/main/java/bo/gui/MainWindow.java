@@ -28,7 +28,12 @@ public class MainWindow {
     private final Tracker tracker = new Tracker(ui);
     private final Parser parser = new Parser();
     private final Image userImage = new Image(MainWindow.class.getResourceAsStream("/images/DaUser.png"));
-    private final Image boImage = new Image(MainWindow.class.getResourceAsStream("/images/DaBo.png"));
+    private final Image neutralOwl = new Image(
+            MainWindow.class.getResourceAsStream("/images/Bo-neutral.png"));
+    private final Image happyOwl = new Image(
+            MainWindow.class.getResourceAsStream("/images/Bo-happy.png"));
+    private final Image confusedOwl = new Image(
+            MainWindow.class.getResourceAsStream("/images/Bo-confused.png"));
 
     /**
      * Initializes automatic scrolling after the FXML controls are injected.
@@ -36,6 +41,8 @@ public class MainWindow {
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        ui.showWelcome("");
+        displayPendingMessages();
     }
 
     /**
@@ -51,7 +58,7 @@ public class MainWindow {
         userInput.clear();
         if (command.equals("bye")) {
             dialogContainer.getChildren().add(DialogBox.getBoDialog(
-                    "Bye. Hope to see you again soon!", boImage));
+                    "Bye for now - try not to collect too many tasks!", neutralOwl));
             PauseTransition closeDelay = new PauseTransition(Duration.seconds(2));
             closeDelay.setOnFinished(event -> userInput.getScene().getWindow().hide());
             closeDelay.play();
@@ -62,10 +69,20 @@ public class MainWindow {
         } catch (CommandException exception) {
             ui.showError(exception.getMessage());
         }
+        displayPendingMessages();
+    }
+
+    /** Displays queued responses with their matching owl expression. */
+    private void displayPendingMessages() {
         for (GuiMessage message : ui.takeMessages()) {
-            DialogBox dialog = message.isError()
-                    ? DialogBox.getErrorDialog(message.text(), boImage)
-                    : DialogBox.getBoDialog(message.text(), boImage);
+            Image owl = switch (message.type()) {
+                case SUCCESS -> happyOwl;
+                case ERROR -> confusedOwl;
+                case NORMAL -> neutralOwl;
+            };
+            DialogBox dialog = message.type() == GuiMessage.MessageType.ERROR
+                    ? DialogBox.getErrorDialog(message.text(), owl)
+                    : DialogBox.getBoDialog(message.text(), owl);
             dialogContainer.getChildren().add(dialog);
         }
     }

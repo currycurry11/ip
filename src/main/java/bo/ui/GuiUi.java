@@ -12,66 +12,84 @@ public class GuiUi extends Ui {
     private final List<GuiMessage> messages = new ArrayList<>();
 
     @Override
+    public void showWelcome(String banner) {
+        addMessage("Hi! I'm Bo. Ready to help you organize your tasks.",
+                GuiMessage.MessageType.NORMAL);
+    }
+
+    @Override
     public void showError(String message) {
-        messages.add(new GuiMessage(message, true));
+        addMessage("I got a little confused: " + message, GuiMessage.MessageType.ERROR);
     }
 
     @Override
     public void showLoadingError() {
-        showError("I could not load your saved tasks; starting with an empty list.");
+        showError("I could not load your saved tasks, so I am starting with an empty list.");
     }
 
     @Override
     public void showTaskAdded(Task task, int taskCount) {
-        addMessage("Added: " + task);
+        addMessage("Got it - I added this task. You now have " + taskCount + " tasks:\n" + task,
+                GuiMessage.MessageType.SUCCESS);
     }
 
     @Override
     public void showTaskList(List<Task> tasks) {
         if (tasks.isEmpty()) {
-            addMessage("Your task list is empty.");
+            addMessage("Your task list is empty. A wonderfully clean slate.",
+                    GuiMessage.MessageType.NORMAL);
             return;
         }
         StringBuilder message = new StringBuilder();
         for (int i = 0; i < tasks.size(); i++) {
             message.append(i + 1).append('.').append(tasks.get(i)).append('\n');
         }
-        addMessage(message.toString().stripTrailing());
+        addMessage("Here is your task list:\n" + message.toString().stripTrailing(),
+                GuiMessage.MessageType.NORMAL);
     }
 
     @Override
     public void showTaskMarked(Task task) {
-        addMessage("Marked done: " + task);
+        addMessage("Nice work - that task is off your plate:\n" + task,
+                GuiMessage.MessageType.SUCCESS);
     }
 
     @Override
     public void showTaskUnmarked(Task task) {
-        addMessage("Marked not done: " + task);
+        addMessage("No problem - I have returned this task to your list:\n" + task,
+                GuiMessage.MessageType.SUCCESS);
     }
 
     @Override
     public void showTaskDeleted(Task task, int taskCount) {
-        addMessage("Deleted: " + task);
+        addMessage("Removed. It has left the task list peacefully:\n" + task,
+                GuiMessage.MessageType.SUCCESS);
     }
 
     @Override
     public void showTaskSnoozed(Task task) {
-        addMessage("Snoozed: " + task);
+        addMessage("Snoozed - I will leave this deadline alone for now:\n" + task,
+                GuiMessage.MessageType.SUCCESS);
     }
 
     @Override
     public void showTaskRescheduled(Task task) {
-        addMessage("Rescheduled: " + task);
+        addMessage("Rescheduled - your future self will appreciate it:\n" + task,
+                GuiMessage.MessageType.SUCCESS);
     }
 
     @Override
     public void showDeadlines(List<Integer> taskIndexes, List<Task> tasks, String heading) {
-        addMessage(createIndexedTaskMessage(heading, taskIndexes, tasks));
+        addMessage("Here is what deserves your attention:\n"
+                        + createIndexedTaskMessage(heading, taskIndexes, tasks),
+                GuiMessage.MessageType.NORMAL);
     }
 
     @Override
     public void showMatchingTasks(List<Integer> taskIndexes, List<Task> tasks) {
-        addMessage(createIndexedTaskMessage("Matching tasks:", taskIndexes, tasks));
+        addMessage("I found these matches for you:\n"
+                        + createIndexedTaskMessage("Matching tasks:", taskIndexes, tasks),
+                GuiMessage.MessageType.NORMAL);
     }
 
     /**
@@ -90,8 +108,8 @@ public class GuiUi extends Ui {
     }
 
     /** Adds a normal response to the queue for the graphical interface. */
-    private void addMessage(String message) {
-        messages.add(new GuiMessage(message, false));
+    private void addMessage(String message, GuiMessage.MessageType type) {
+        messages.add(new GuiMessage(message, type));
     }
 
     /**
