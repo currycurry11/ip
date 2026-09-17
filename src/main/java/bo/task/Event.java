@@ -1,20 +1,26 @@
 package bo.task;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 /**
- * Represents a task with a start and end time.
+ * Represents a task with a start and end date and time.
  */
 public class Event extends Task {
-    private final String from;
-    private final String to;
+    private static final DateTimeFormatter DISPLAY_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    private final LocalDateTime from;
+    private final LocalDateTime to;
 
     /**
      * Creates an event task.
      *
      * @param description The event description.
-     * @param from The start time text.
-     * @param to The end time text.
+     * @param from The start date and time.
+     * @param to The end date and time.
      */
-    public Event(String description, String from, String to) {
+    public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;
         this.to = to;
@@ -27,7 +33,8 @@ public class Event extends Task {
      */
     @Override
     public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
+        return "[E]" + super.toString() + " (from: " + formatDateTime(from)
+                + " to: " + formatDateTime(to) + ")";
     }
 
     /**
@@ -37,6 +44,17 @@ public class Event extends Task {
      */
     @Override
     public String toFileString() {
-        return "E | " + getSaveStatus() + " | " + getDescription() + " | " + from + " | " + to;
+        return "E | " + getSaveStatus() + " | " + getDescription() + " | "
+                + from + " | " + to;
+    }
+
+    /**
+     * Formats an event date and time for display.
+     *
+     * @param dateTime The date and time to format.
+     * @return The formatted date and time.
+     */
+    public static String formatDateTime(LocalDateTime dateTime) {
+        return dateTime.format(DISPLAY_DATE_TIME_FORMAT);
     }
 }

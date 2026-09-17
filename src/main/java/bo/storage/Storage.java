@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -182,7 +183,8 @@ public class Storage {
     private Event createEvent(String[] fields, int lineNumber) throws CommandException {
         validateFieldCount(fields, 5, lineNumber);
         validateNonEmptyFields(fields, lineNumber, 2, 3, 4);
-        return new Event(fields[2], fields[3], fields[4]);
+        return new Event(fields[2],
+                LocalDateTime.parse(fields[3]), LocalDateTime.parse(fields[4]));
     }
 
     /**

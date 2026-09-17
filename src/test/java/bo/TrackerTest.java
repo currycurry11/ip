@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -249,7 +250,9 @@ public class TrackerTest {
     public void findTasks_keywordMatchesAcrossMultipleTaskTypes_doesNotThrow() throws CommandException {
         tracker.addTask(new Todo("read book"));
         tracker.addTask(new Deadline("return book", LocalDate.of(2024, 3, 2)));
-        tracker.addTask(new bo.task.Event("book club", "2pm", "4pm"));
+        tracker.addTask(new bo.task.Event("book club",
+                LocalDateTime.of(2026, 10, 10, 14, 0),
+                LocalDateTime.of(2026, 10, 10, 16, 0)));
         tracker.addTask(new Todo("unrelated task"));
 
         assertDoesNotThrowWrapper(() -> tracker.findTasks("book"));

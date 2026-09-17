@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -29,7 +30,9 @@ public class StorageTest {
         Storage storage = new Storage(tempDir.resolve("bo.txt"));
         Todo todo = new Todo("read book");
         Deadline deadline = new Deadline("submit report", LocalDate.of(2999, 1, 1));
-        Event event = new Event("team meeting", "2pm", "4pm");
+        Event event = new Event("team meeting",
+                LocalDateTime.of(2026, 10, 10, 14, 0),
+                LocalDateTime.of(2026, 10, 10, 16, 0));
         deadline.markAsDone();
 
         storage.save(List.of(todo, deadline, event));

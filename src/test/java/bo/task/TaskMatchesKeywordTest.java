@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -80,7 +81,9 @@ public class TaskMatchesKeywordTest {
 
     @Test
     public void matchesKeyword_worksOnNonTodoSubclasses_event() {
-        Task task = new Event("book club meeting", "2pm", "4pm");
+        Task task = new Event("book club meeting",
+                LocalDateTime.of(2026, 10, 10, 14, 0),
+                LocalDateTime.of(2026, 10, 10, 16, 0));
 
         assertTrue(task.matchesKeyword("club"));
         assertFalse(task.matchesKeyword("dinner"));

@@ -20,7 +20,8 @@ In the examples below:
 
 - `DESCRIPTION` is the text describing a task.
 - `TASK_NUMBER` is the number shown by `list`.
-- Dates must use the `yyyy-MM-dd` format, for example `2026-10-10`.
+- Dates must use the `yyyy-MM-dd` format, and event date-times must use
+  `yyyy-MM-dd HH:mm`, for example `2026-10-10 14:00`.
 - Text containing spaces does not need quotation marks.
 
 ## Features
@@ -51,15 +52,15 @@ Example: `deadline submit report /by 2026-10-10`
 
 ### Adding an event: `event`
 
-Adds a task with a start and end time.
+Adds a task with a start and end date and time.
 
 Format:
 
 ```text
-event DESCRIPTION /from START /to END
+event DESCRIPTION /from DATE_TIME /to DATE_TIME
 ```
 
-Example: `event project meeting /from 2pm /to 4pm`
+Example: `event project meeting /from 2026-10-10 14:00 /to 2026-10-10 16:00`
 
 ### Viewing all tasks: `list`
 
