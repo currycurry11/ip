@@ -3,6 +3,7 @@ package bo.parser;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 
@@ -150,6 +151,32 @@ public class ParserTest {
     public void executeCommand_eventEmptyDescription_throwsCommandException() {
         assertThrows(CommandException.class,
                 () -> parser.executeCommand(tracker, "event /from monday /to friday"));
+    }
+
+    @Test
+    public void executeCommand_eventWithDateAndTime_savesEvent() throws Exception {
+        parser.executeCommand(tracker,
+                "event project meeting /from 2026-10-10 14:00 /to 2026-10-10 16:30");
+
+        assertTrue(Files.readString(tempDir.resolve("bo.txt")).contains("2026-10-10T14:00"));
+    }
+
+    @Test
+    public void executeCommand_eventWithInvalidDateAndTime_throwsCommandException() {
+        CommandException exception = assertThrows(CommandException.class,
+                () -> parser.executeCommand(tracker,
+                        "event project meeting /from 2026-10-10 /to 2026-10-10 16:30"));
+
+        assertTrue(exception.getMessage().contains("yyyy-MM-dd HH:mm"));
+    }
+
+    @Test
+    public void executeCommand_eventEndingBeforeStart_throwsCommandException() {
+        CommandException exception = assertThrows(CommandException.class,
+                () -> parser.executeCommand(tracker,
+                        "event project meeting /from 2026-10-10 16:30 /to 2026-10-10 14:00"));
+
+        assertTrue(exception.getMessage().contains("end must be after its start"));
     }
 
     // ---------- mark / unmark ----------

@@ -1,6 +1,8 @@
 package bo.parser;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import bo.Tracker;
@@ -13,6 +15,9 @@ import bo.task.Todo;
  * Interprets user commands and performs the requested task operation.
  */
 public class Parser {
+    private static final DateTimeFormatter EVENT_DATE_TIME_FORMAT =
+            DateTimeFormatter.ofPattern("uuuu-MM-dd HH:mm");
+
     /**
      * Validates and performs one user command.
      *
@@ -235,17 +240,39 @@ public class Parser {
         int toIndex = details.indexOf("/to");
         if (fromIndex < 0 || toIndex < 0 || fromIndex >= toIndex) {
             throw new CommandException("An event needs /from and /to information. "
-                    + "Use: event <description> /from <start> /to <end>");
+                    + "Use: event <description> /from <yyyy-MM-dd HH:mm> "
+                    + "/to <yyyy-MM-dd HH:mm>");
         }
 
         String description = details.substring(0, fromIndex).trim();
         String from = details.substring(fromIndex + 5, toIndex).trim();
         String to = details.substring(toIndex + 3).trim();
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
-            throw new CommandException("An event needs a description, start, and end time. "
-                    + "Use: event <description> /from <start> /to <end>");
+            throw new CommandException("An event needs a description, start, and end date and time. "
+                    + "Use: event <description> /from <yyyy-MM-dd HH:mm> "
+                    + "/to <yyyy-MM-dd HH:mm>");
         }
-        tracker.addTask(new Event(description, from, to));
+        LocalDateTime startDateTime = parseEventDateTime(from);
+        LocalDateTime endDateTime = parseEventDateTime(to);
+        if (!startDateTime.isBefore(endDateTime)) {
+            throw new CommandException("An event's end must be after its start.");
+        }
+        tracker.addTask(new Event(description, startDateTime, endDateTime));
+    }
+
+    /**
+     * Parses an event date and time in the format accepted by Bo.
+     *
+     * @param dateTimeText The event date and time text.
+     * @return The parsed event date and time.
+     * @throws CommandException If the date and time format is invalid.
+     */
+    private LocalDateTime parseEventDateTime(String dateTimeText) throws CommandException {
+        try {
+            return LocalDateTime.parse(dateTimeText, EVENT_DATE_TIME_FORMAT);
+        } catch (DateTimeParseException exception) {
+            throw new CommandException("Event dates and times must use yyyy-MM-dd HH:mm.");
+        }
     }
 
     /**
@@ -325,7 +352,7 @@ public class Parser {
         return "I don't recognize that command. Try one of these:\n"
                 + "todo <description>\n"
                 + "deadline <description> /by <yyyy-MM-dd>\n"
-                + "event <description> /from <start> /to <end>\n"
+                + "event <description> /from <yyyy-MM-dd HH:mm> /to <yyyy-MM-dd HH:mm>\n"
                 + "list\n"
                 + "find <keyword>\n"
                 + "upcoming\n"
