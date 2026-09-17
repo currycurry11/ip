@@ -79,8 +79,8 @@ public abstract class Task {
     /**
      * Checks whether this task's description contains the given keyword.
      *
-     * @param keyword the text to search for
-     * @return true if the description contains the keyword
+     * @param keyword The text to search for.
+     * @return True if the description contains the keyword.
      */
     public boolean matchesKeyword(String keyword) {
         return description.contains(keyword);
