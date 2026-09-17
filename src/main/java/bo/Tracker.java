@@ -20,6 +20,9 @@ import bo.ui.Ui;
  * Stores and displays the tasks entered during one run of Bo.
  */
 public class Tracker {
+    private static final String UPCOMING_DEADLINES_HEADING = " Upcoming deadlines:";
+    private static final String DEADLINES_DUE_HEADING_PREFIX = " Deadlines due on ";
+
     private final TaskList taskList;
     private final Storage storage;
     private final Ui ui;
@@ -82,7 +85,7 @@ public class Tracker {
             Deadline deadline = (Deadline) taskList.get(index);
             return deadline.isDone() || deadline.getDueDate().isBefore(currentDate);
         });
-        printDeadlineIndexes(taskIndexes, " Upcoming deadlines:");
+        printDeadlineIndexes(taskIndexes, UPCOMING_DEADLINES_HEADING);
     }
 
     /**
@@ -93,7 +96,8 @@ public class Tracker {
     public void printDeadlinesDueOn(LocalDate dueDate) {
         List<Integer> taskIndexes = getDeadlineIndexes();
         taskIndexes.removeIf(index -> !((Deadline) taskList.get(index)).getDueDate().equals(dueDate));
-        printDeadlineIndexes(taskIndexes, " Deadlines due on " + Deadline.formatDate(dueDate) + ":");
+        String heading = DEADLINES_DUE_HEADING_PREFIX + Deadline.formatDate(dueDate) + ":";
+        printDeadlineIndexes(taskIndexes, heading);
     }
 
     /**
