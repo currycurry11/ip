@@ -18,7 +18,7 @@ Bo saves changes automatically in `data/bo.txt`.
 | --- | --- |
 | Add a to-do | `todo DESCRIPTION` |
 | Add a deadline | `deadline DESCRIPTION /by DATE` |
-| Add an event | `event DESCRIPTION /from START /to END` |
+| Add an event | `event DESCRIPTION /from DATE_TIME /to DATE_TIME` |
 | List tasks | `list` |
 | Find tasks | `find KEYWORD` |
 | Mark complete | `mark TASK_NUMBER` |
@@ -30,8 +30,9 @@ Bo saves changes automatically in `data/bo.txt`.
 | Change a deadline date | `reschedule TASK_NUMBER DATE` |
 | Exit Bo | `bye` |
 
-Dates use the `yyyy-MM-dd` format. Only deadline tasks can be snoozed or
-rescheduled, and new dates cannot be in the past.
+Dates use the `yyyy-MM-dd` format. Event date-times use `yyyy-MM-dd HH:mm`.
+Only deadline tasks can be snoozed or rescheduled, and new deadline dates
+cannot be in the past.
 
 ## Documentation
 
