@@ -210,8 +210,8 @@ public class TrackerTest {
     }
 
     /**
-     * Small local helper so the two print tests above read cleanly without
-     * importing yet another JUnit assertion style just for this file.
+     * Runs an action without requiring an additional JUnit assertion import.
+     * This keeps the two print tests above concise while preserving failures.
      */
     private void assertDoesNotThrowWrapper(Runnable action) {
         action.run();
