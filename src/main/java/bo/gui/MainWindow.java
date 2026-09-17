@@ -5,14 +5,13 @@ import bo.command.CommandException;
 import bo.parser.Parser;
 import bo.ui.GuiMessage;
 import bo.ui.GuiUi;
+import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
 import javafx.scene.image.Image;
-import javafx.animation.PauseTransition;
+import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 
 /**
@@ -40,7 +39,7 @@ public class MainWindow {
      */
     @FXML
     public void initialize() {
-        scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
+        dialogContainer.heightProperty().addListener(observable -> scrollPane.setVvalue(1.0));
         ui.showWelcome("");
         displayPendingMessages();
     }
