@@ -90,6 +90,13 @@ public class Parser {
         tracker.addTask(new Todo(description));
     }
 
+    /**
+     * Postpones a deadline after validating the task number and duration.
+     *
+     * @param tracker The tracker used to update the deadline.
+     * @param arguments The task number and postponement duration.
+     * @throws CommandException If the arguments are invalid.
+     */
     private void snoozeTask(Tracker tracker, String arguments) throws CommandException {
         String[] parts = arguments.split("\\s+");
         if (parts.length != 2) {
