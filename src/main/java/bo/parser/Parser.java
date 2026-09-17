@@ -117,6 +117,13 @@ public class Parser {
         tracker.snoozeTask(taskNumber, days);
     }
 
+    /**
+     * Reschedules a deadline after validating its task number and new date.
+     *
+     * @param tracker The tracker used to update the deadline.
+     * @param arguments The task number and replacement date.
+     * @throws CommandException If the arguments are invalid.
+     */
     private void rescheduleTask(Tracker tracker, String arguments) throws CommandException {
         String[] parts = arguments.split("\\s+");
         if (parts.length != 2) {
