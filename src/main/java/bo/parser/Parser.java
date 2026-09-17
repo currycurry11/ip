@@ -319,6 +319,8 @@ public class Parser {
                 + "mark <task number>\n"
                 + "unmark <task number>\n"
                 + "delete <task number>\n"
+                + "snooze <task number> <number of days>d\n"
+                + "reschedule <task number> <yyyy-MM-dd>\n"
                 + "bye";
     }
 }
